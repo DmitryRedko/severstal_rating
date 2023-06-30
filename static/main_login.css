@@ -1,0 +1,39 @@
+.page-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.page-footer {
+    background: #9984D4;
+}
+
+.form-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.form-container h1 {
+    text-align: center;
+}
+
+.form-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-container input {
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.form-container input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
