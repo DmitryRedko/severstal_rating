@@ -12,6 +12,15 @@
   .page-header .brand {
     flex: 1;
   }
+
+  .page-header .username {
+    flex: 1;
+    font-size: 25px;
+    font-weight: bold;
+    color: #244391;
+    margin-right: 30px;
+  }
+
   
   .page-header .brand img {
     max-height: 70px;
@@ -23,7 +32,8 @@
   }
   
   .page-header .login,
-  .page-header .registration {
+  .page-header .logout,
+  .page-header .administration {
     display: inline-block;
     padding: 10px 20px;
     background-color: #5378d3;
@@ -34,7 +44,8 @@
   }
   
   .page-header .login:hover,
-  .page-header .registration:hover {
+  .page-header .logout:hover,
+  .page-header .administration:hover {
     background-color: #4562a0;
   }
 

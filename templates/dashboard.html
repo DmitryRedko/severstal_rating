@@ -1,11 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard</title>
+    <title>Rating menu</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='header.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='common.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard.css') }}">
 </head>
 <body>
-    <h1>Welcome, {{ username }}!</h1>
-    <p>This is your dashboard.</p>
-    <a href="{{ url_for('logout') }}">Logout</a>
+    <header class="page-header">
+        <div class="brand">
+          <a href="{{ url_for('home') }}"><img src="static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
+        </div>
+        <div class="buttons">
+          <div class="username">{{ username }}</div>  <!-- Выводим имя руководителя -->
+          <a href="{{ url_for('admin') }}" class="administration">Rating</a>
+          <a href="{{ url_for('logout') }}" class="logout" >Logout</a>
+        </div>
+    </header>
+
+    <main class="form-container">
+        <div class="CollegList">
+          <h1>List of Colleagues</h1>
+          <table>
+              <thead>
+                  <tr>
+                      <th>ID</th>
+                      <th>ФИО Сотрудника</th>
+                      <th>Отдел</th>
+                      <th>Должность</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for colleague in colleagues_list %}
+                  <tr>
+                      <td>{{ colleague[0] }}</td>
+                      <td>{{ colleague[1] }}</td>
+                      <td>{{ colleague[3] }}</td>
+                      <td>{{ colleague[4] }}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+    </main>
 </body>
 </html>
