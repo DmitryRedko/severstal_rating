@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rating menu</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard/colleague_page.css') }}">
+</head>
+<body>
+    <header class="page-header">
+        <div class="brand">
+            <a href="{{ url_for('home') }}"><img src="../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
+        </div>
+        <div class="buttons">
+            <div class="username">Оцениваемый: {{ userinfo.full_name }}</div>
+            <div class="username">Отдел: {{ userinfo.department }}</div>
+            <div class="username">Должность: {{ userinfo.department_position }}</div>
+            <a href="{{ url_for('dashboard') }}" class="headerbottom">Список оцениваемых</a>
+            <a href="{{ url_for('logout') }}" class="headerbottom" >Деавторизация</a>
+        </div>
+    </header>
+
+    <main class="form-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Критерий</th>
+                    <th>Описание</th>
+                    <th>Шкала</th>
+                    <th>Оценка сотрудника</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for criterion in criterias_list %}
+                <tr>
+                    <td>{{ criterion }}</td>
+                    <td>{{ description_list[loop.index0] }}</td>
+                    <td>0-150</td>
+                    <td>
+                        <input type="number" name="{{ criterion.id }}" min="0" max="150" step="1">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button class="submit-button" type="submit">Подтвердить</button>
+    </main>
+</body>
+</html>

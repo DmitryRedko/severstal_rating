@@ -30,10 +30,8 @@
     display: flex;
     align-items: center;
   }
-  
-  .page-header .login,
-  .page-header .logout,
-  .page-header .administration {
+
+  .page-header .headerbottom {
     display: inline-block;
     padding: 10px 20px;
     background-color: #5378d3;
@@ -41,11 +39,10 @@
     text-decoration: none;
     border-radius: 5px;
     margin-right: 10px;
+    font-size: 20px;
   }
   
-  .page-header .login:hover,
-  .page-header .logout:hover,
-  .page-header .administration:hover {
+  .page-header .headerbottom:hover {
     background-color: #4562a0;
   }
 

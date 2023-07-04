@@ -1,9 +1,7 @@
+
 class UserManager:
-    def __init__(self):
-        self.users = {
-            'John Smith': 'HSN001',
-            'mary': '123'
-        }
+    def __init__(self,db):
+        self.users = db.get_head_colleagues()
 
     def verify_user(self, username, password):
         return username in self.users and self.users[username] == password
@@ -26,3 +24,5 @@ class AdminManager:
 
     def add_admin(self, adminname, password):
         self.users[adminname] = password
+
+        

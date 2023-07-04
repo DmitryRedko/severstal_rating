@@ -15,11 +15,10 @@
     padding: 20px;
     border-radius: 10px;
     margin: 0;
-    width: 100vw; /* Use viewport width to cover the entire screen */
+    width: 98.5vw; /* Use viewport width to cover the entire screen */
     height: 100vh; /* Use viewport height to cover the entire screen */
     box-sizing: border-box; /* Add box-sizing to include padding in width calculation */
 }
-
 
 .form-container h1 {
     text-align: center;
@@ -53,10 +52,17 @@ th, td {
     border-bottom: 1px solid #ddd;
 }
 
-tr:hover {background-color: #f5f5f5;}
+tr:hover {
+    background-color: #f5f5f5;
+}
 
 th {
     background-color: #4CAF50;
     color: white;
 }
 
+.colleague-link {
+    text-decoration: none;
+    color: inherit;
+    color:  #244391;
+}

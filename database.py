@@ -10,17 +10,17 @@ class DataBase:
         )
         self.conn.autocommit = True
     
-    def get_colleagues(self, head_service_number, admin):
+    def get_colleagues(self, head_report_card, admin):
         result = ''
         if admin == 0:
             with self.conn.cursor() as cursor:
                 cursor.execute(
                     """
                     SELECT *
-                    FROM employee
-                    WHERE head_service_number = %s
+                    FROM staff
+                    WHERE head_report_card = %s
                     """,
-                    (head_service_number,)
+                    (head_report_card,)
                 )
                 result = cursor.fetchall()
         else:
@@ -28,25 +28,57 @@ class DataBase:
                 cursor.execute(
                     """
                     SELECT *
-                    FROM employee
+                    FROM staff
                     """
                 )
                 result = cursor.fetchall()
         return result
-
-
-    def get_head_service_name(self, number):
+    
+    def get_head_colleagues(self):
         result = ''
         with self.conn.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT fio_head_of_department
-                FROM head_of_department
-                WHERE head_service_number = %s
+                SELECT employee_full_name, employee_record_card
+                FROM staff
+                WHERE employee_record_card IN (SELECT DISTINCT head_report_card FROM staff);
+                """
+                )
+            result = cursor.fetchall()
+        return dict(result)
+    
+    def get_num_record_userinfo(self, number):
+        result = ''
+        with self.conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT employee_full_name, department_position, department
+                FROM staff
+                WHERE employee_record_card = %s
                 """,
                 (number,)
             )
             result = cursor.fetchall()
-        if result:
-            return result[0][0]
-        return ''
+            print(result)
+            infodict = {
+                'full_name': result[0][0],
+                'department': result[0][2],
+                'department_position': result[0][1]
+            }
+        return infodict
+    
+
+    def get_criterias_name(self, staff_num):
+        result = ''
+        with self.conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT c.criterion, c.description
+                FROM staff s
+                JOIN criteria c ON s.department = c.department
+                            AND s.department_position = c.department_position
+                WHERE s.employee_record_card = %s;""",
+                (staff_num,)
+            )
+            result = cursor.fetchall()
+        return result

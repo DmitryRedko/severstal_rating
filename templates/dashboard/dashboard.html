@@ -2,9 +2,9 @@
 <html>
 <head>
     <title>Rating menu</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='header.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='common.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard/main_dashboard.css') }}">
 </head>
 <body>
     <header class="page-header">
@@ -13,8 +13,8 @@
         </div>
         <div class="buttons">
           <div class="username">{{ username }}</div>  <!-- Выводим имя руководителя -->
-          <a href="{{ url_for('admin') }}" class="administration">Rating</a>
-          <a href="{{ url_for('logout') }}" class="logout" >Logout</a>
+          <a href="{{ url_for('dashboard') }}" class="headerbottom">Список оцениваемых</a>
+          <a href="{{ url_for('logout') }}" class="headerbottom" >Деавторизация</a>
         </div>
     </header>
 
@@ -31,14 +31,14 @@
                   </tr>
               </thead>
               <tbody>
-                  {% for colleague in colleagues_list %}
+                {% for colleague in colleagues_list %}
                   <tr>
-                      <td>{{ colleague[0] }}</td>
-                      <td>{{ colleague[1] }}</td>
-                      <td>{{ colleague[3] }}</td>
-                      <td>{{ colleague[4] }}</td>
+                    <td>{{ loop.index }}</td>
+                    <td><a class="colleague-link" href="{{ url_for('colleague_page', colleague_num=colleague[0]) }}">{{ colleague[1] }}</a></td>
+                    <td>{{ colleague[3] }}</td>
+                    <td>{{ colleague[2] }}</td>
                   </tr>
-                  {% endfor %}
+                {% endfor %}
               </tbody>
           </table>
       </div>

@@ -2,9 +2,9 @@
 <html>
 <head>
     <title>administration Page</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='header.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='common.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_administration.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_administration/main_administration.css') }}">
 </head>
 <body>
     <header class="page-header">
@@ -12,8 +12,8 @@
           <a href="{{ url_for('home') }}"><img src="static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
         </div>
         <div class="buttons">
-          <a href="{{ url_for('login') }}" class="login">Login</a>
-          <a href="{{ url_for('admin') }}" class="administration">Admin</a>
+          <a href="{{ url_for('login') }}" class="headerbottom">Login</a>
+          <a href="{{ url_for('admin') }}" class="headerbottom">Admin</a>
         </div>
     </header>
 
