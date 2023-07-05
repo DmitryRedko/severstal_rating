@@ -3,6 +3,7 @@ from functools import wraps
 from user import UserManager,AdminManager
 from config import dictionary, db_settings
 from database import DataBase
+import datetime
 
 class FlaskApp:
     def __init__(self):
@@ -57,7 +58,6 @@ class FlaskApp:
     def dashboard(self, password = None):
         if password is None:
              password = session.get('password')
-        
         self.db = DataBase(db_settings)
         colleagues = self.db.get_colleagues(password,0)
         username = self.db.get_num_record_userinfo(password)['full_name']
@@ -67,9 +67,37 @@ class FlaskApp:
         criterias = self.db.get_criterias_name(colleague_num)
         description_list = [row[1] for row in criterias]
         criterias_list = [row[0] for row in criterias]
-        userinfo = (self.db.get_num_record_userinfo(colleague_num))
+        userinfo = self.db.get_num_record_userinfo(colleague_num)
+        date = datetime.date.today().strftime("%d.%m.%Y")
+        Marks = []
+        flag = 0
+        status = ''
+        status_msg = ''
+        if request.method == 'POST' and "submit_button" in request.form:
+            for i in range(len(criterias_list)):
+                criteria = request.form.get(f"v_{i}")
+                if(criteria!='' and criteria is not None and int(criteria)>=0 and int(criteria)<=150):
+                    Marks.append(int(criteria))
+                else:
+                    flag = 1
+                    break
+            if(len(Marks)==len(criterias_list) and flag == 0):
+                status_msg = 'Результаты успешно сохранены.'
+                status = 1
+            else:
+                status_msg = 'Пожалуйста, заполните все доступные критери.'
+                status = 0
+        if(flag ==0 and status ==1):
+            listmark = []
+            for i in range(len(criterias_list)):
+                listmark.append([userinfo['employee_record_card'],criterias_list[i],date,Marks[i]])
+            self.db.add_mark_to_base(listmark)
 
-        return render_template('dashboard/colleague_page.html', description_list=description_list, criterias_list=criterias_list, userinfo = userinfo)
+            
+        enumerated_criterias = list(enumerate(criterias_list))  
+        return render_template('dashboard/colleague_page.html', description_list=description_list, 
+                            userinfo=userinfo, date=date, enumerated_criterias=enumerated_criterias, status_msg = status_msg, status = status)
+
 
     def dashboard_admin(self):
         username= 'admin'

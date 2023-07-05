@@ -21,29 +21,36 @@
     </header>
 
     <main class="form-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Критерий</th>
-                    <th>Описание</th>
-                    <th>Шкала</th>
-                    <th>Оценка сотрудника</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for criterion in criterias_list %}
-                <tr>
-                    <td>{{ criterion }}</td>
-                    <td>{{ description_list[loop.index0] }}</td>
-                    <td>0-150</td>
-                    <td>
-                        <input type="number" name="{{ criterion.id }}" min="0" max="150" step="1">
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <button class="submit-button" type="submit">Подтвердить</button>
+        <form  action="{{ url_for('colleague_page', colleague_num=userinfo.employee_record_card) }}" method="post" >
+            <table>
+                <thead>
+                    <tr>
+                        <th>Критерий</th>
+                        <th>Описание</th>
+                        <th>Дата оценивания</th>
+                        <th>Шкала</th>
+                        <th>Оценка сотрудника</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for index, criterion in enumerated_criterias %}
+                    <tr>
+                        <td>{{ criterion }}</td>
+                        <td>{{ description_list[index] }}</td>
+                        <td>{{ date }}</td>
+                        <td>0-150</td>
+                        <td>
+                            <input type="number" min="0" max="150" step="1" id="v_{{ index }}" name="v_{{ index }}">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="status-message_{{ status }}">
+                {{ status_msg }}
+            </div>
+            <button class="submit-button" type="submit" name="submit_button"> Подтвердить </button>
+        </form>
     </main>
 </body>
 </html>

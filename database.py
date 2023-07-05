@@ -52,7 +52,7 @@ class DataBase:
         with self.conn.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT employee_full_name, department_position, department
+                SELECT employee_full_name, department_position, department, employee_record_card
                 FROM staff
                 WHERE employee_record_card = %s
                 """,
@@ -63,10 +63,21 @@ class DataBase:
             infodict = {
                 'full_name': result[0][0],
                 'department': result[0][2],
-                'department_position': result[0][1]
+                'department_position': result[0][1],
+                'employee_record_card': result[0][3]
             }
         return infodict
     
+    def add_mark_to_base(self, dictmark):
+        with self.conn.cursor() as cursor:
+            for i in range(len(dictmark)):
+                cursor.execute(
+                    """
+                    INSERT INTO estimation (employee_record_card, criterion, performance_date, performance)
+                    VALUES (%s, %s, %s, %s)
+                    """,
+                    (dictmark[i][0],dictmark[i][1],dictmark[i][2],dictmark[i][3],)
+                )
 
     def get_criterias_name(self, staff_num):
         result = ''
