@@ -9,7 +9,7 @@
 <body>
     <header class="page-header">
         <div class="brand">
-            <a href="{{ url_for('home') }}"><img src="../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
+            <a href="{{ url_for('home') }}"><img src="../../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
         </div>
         <div class="buttons">
             <div class="username">Оцениваемый: {{ userinfo.full_name }}</div>
@@ -21,7 +21,8 @@
     </header>
 
     <main class="form-container">
-        <form  action="{{ url_for('colleague_page', colleague_num=userinfo.employee_record_card) }}" method="post" >
+        <form  action="{{ url_for('colleague_page', colleague_num=userinfo.employee_record_card, head_num=userinfo.head_record_card) }}" method="post" >
+            <div>Первый блок критериев:</div>
             <table>
                 <thead>
                     <tr>
@@ -30,22 +31,56 @@
                         <th>Дата оценивания</th>
                         <th>Шкала</th>
                         <th>Оценка сотрудника</th>
+                        <th>Комментарии/замечания</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for index, criterion in enumerated_criterias %}
+                    {% for index,item in print_info_first %}
                     <tr>
-                        <td>{{ criterion }}</td>
-                        <td>{{ description_list[index] }}</td>
-                        <td>{{ date }}</td>
-                        <td>0-150</td>
+                        <td>{{ item.0 }}</td>
+                        <td>{{ item.1 }}</td>
+                        <td>{{ item.2}}</td>
+                        <td>{{ item.3 }}-{{ item.4 }}</td>
                         <td>
-                            <input type="number" min="0" max="150" step="1" id="v_{{ index }}" name="v_{{ index }}">
+                            <input type="number" min="{{item.3}}" step="0.001" max="{{item.4}}" id="markf_{{ index }}" name="markf_{{ index }}">
+                        </td>
+                        <td>
+                            <input type="text" name="messf_{{ index }}" maxlength="1000">
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <div>Второй блок критериев:</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Критерий</th>
+                        <th>Описание</th>
+                        <th>Дата оценивания</th>
+                        <th>Шкала</th>
+                        <th>Оценка сотрудника</th>
+                        <th>Комментарии/замечания</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for index,item in print_info_second %}
+                    <tr>
+                        <td>{{ item.0 }}</td>
+                        <td>{{ item.1 }}</td>
+                        <td>{{ item.2}}</td>
+                        <td>{{item.3}}-{{item.4}}</td>
+                        <td>
+                            <input type="number" min="{{item.3}}" step="0.001" max="{{item.4}}" id="marks_{{ index }}" name="marks_{{ index }}">
+                        </td>
+                        <td>
+                            <input type="text" name="messs_{{ index }}" maxlength="1000">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
             <div class="status-message_{{ status }}">
                 {{ status_msg }}
             </div>
