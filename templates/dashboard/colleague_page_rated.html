@@ -9,13 +9,13 @@
 <body>
     <header class="page-header">
         <div class="brand">
-            <a href="{{ url_for('dashboard', head_id=head_id) }}"><img src="../../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
+            <a href="{{ url_for('dashboard') }}"><img src="../../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
         </div>
         <div class="buttons">
             <div class="username">Оцениваемый: {{ userinfo.full_name }}</div>
             <div class="username">Отдел: {{ userinfo.department }}</div>
             <div class="username">Должность: {{ userinfo.department_position }}</div>
-            <a href="{{ url_for('dashboard', head_id=head_id) }}" class="headerbottom">Список оцениваемых</a>
+            <a href="{{ url_for('dashboard') }}" class="headerbottom">Список оцениваемых</a>
             <a href="{{ url_for('logout') }}" class="headerbottom" >Деавторизация</a>
         </div>
     </header>

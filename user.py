@@ -1,4 +1,4 @@
-
+from flask_login import UserMixin
 class UserManager:
     def __init__(self,db):
         self.users = db.get_head_colleagues()
@@ -25,4 +25,24 @@ class AdminManager:
     def add_admin(self, adminname, password):
         self.users[adminname] = password
 
+
+class UserLogin(UserMixin):
+    def get_user_from_DB(self, user_id, db):
+        self.__user = db.get_num_record_userinfo(user_id)
+        return self
         
+    def create(self, user):
+        self.__user = user
+        return self
+     
+    def is_authenticated(self):
+        return True
+    
+    def is_active(self):
+        return True
+    
+    def is_anonymous(self):
+        return False
+    
+    def get_id(self):
+        return str(self.__user)

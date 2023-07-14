@@ -47,10 +47,12 @@ table {
     border-collapse: collapse;
     font-size: 25px;
     width: 100%;
+    table-layout: fixed;
 }
 
 th, td {
     padding: 8px;
+    width: 50%; 
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
@@ -82,13 +84,13 @@ th {
     background-color: #4CAF50;
 }
 
-.status-message_0 {
+.status-message_error {
     color: #ff0000;
     font-size: 20px;
     font-weight: bold;
 }
 
-.status-message_1 {
+.status-message_success {
     color: #4CAF50;
     font-size: 20px;
     font-weight: bold;

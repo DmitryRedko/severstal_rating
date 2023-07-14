@@ -15,7 +15,7 @@
           <a href="{{ url_for('dashboard_rated', head_id=head_id) }}" class="headerbottom">Уже оценены</a>
         </div>
         <div class="buttons">
-          <div class="username">{{ username }}</div>
+          <div class="username">{{ username }}</div>  <!-- Выводим имя руководителя -->
           <a href="{{ url_for('logout') }}" class="headerbottom" >Деавторизация</a>
         </div>
     </header>
@@ -36,7 +36,7 @@
                 {% for colleague in colleagues_list %}
                   <tr>
                     <td>{{ loop.index }}</td>
-                    <td>{{ colleague[1] }}</td>
+                    <td><a class="colleague-link" href="{{ url_for('colleague_page', colleague_id=colleague[5], head_id=head_id) }}">{{ colleague[1] }}</a></td>
                     <td>{{ colleague[3] }}</td>
                     <td>{{ colleague[2] }}</td>
                   </tr>
