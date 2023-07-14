@@ -36,7 +36,7 @@ class DataBase:
                     """
                     SELECT s.employee_record_card, s.employee_full_name, s.department_position, s.department,  s.head_record_card, s.id
                     FROM public.staff s
-                    FULL JOIN public.rate_status rs ON s.employee_record_card = rs.employee_id
+                    FULL JOIN public.rate_status rs ON s.id = rs.employee_id
                     WHERE rs.rate_status = true
                     AND s.head_record_card = %s;
                     """,
@@ -50,17 +50,39 @@ class DataBase:
     
     def get_colleagues_to_rate(self, head_record_card):
         result = ''
+        # try:
+        with self.conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT s.employee_record_card, s.employee_full_name, s.department_position, s.department,  s.head_record_card, s.id
+                FROM public.staff s
+                FULL JOIN public.rate_status rs ON s.id = rs.employee_id
+                WHERE (rs.rate_status = false OR rs.rate_status IS NULL)
+                AND s.head_record_card = %s;
+                """,
+                (head_record_card,)
+            )
+            result = cursor.fetchall()
+        # except:
+        #     result = False
+        return result
+    
+    def get_marks_rated_colleagues(self, employee_record_card, name):
+        result = ''
         try:
             with self.conn.cursor() as cursor:
                 cursor.execute(
-                    """
-                    SELECT s.employee_record_card, s.employee_full_name, s.department_position, s.department,  s.head_record_card, s.id
-                    FROM public.staff s
-                    FULL JOIN public.rate_status rs ON s.employee_record_card = rs.employee_id
-                    WHERE (rs.rate_status = false OR rs.rate_status IS NULL)
-                    AND s.head_record_card = %s;
+                    f"""
+                    SELECT employee_record_card, criterion, description, performance_date, min_score, max_score, performance, comment
+                    FROM estimation_{name}
+                    WHERE employee_record_card = %s
+                    AND performance_date = (
+                    SELECT MAX(performance_date)
+                    FROM estimation_{name}
+                    WHERE employee_record_card = %s
+                    );
                     """,
-                    (head_record_card,)
+                    (employee_record_card, employee_record_card,)
                 )
                 result = cursor.fetchall()
         except:
@@ -147,19 +169,19 @@ class DataBase:
     
     def add_mark_to_base(self, dictmark, name):
         result = ''
-        try:
-            with self.conn.cursor() as cursor:
-                for i in range(len(dictmark)):
-                    cursor.execute(
-                        f"""
-                        INSERT INTO estimation_{name} (employee_record_card, criterion, performance_date, min_score, max_score, performance, comment)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)
-                        """,
-                        (dictmark[i][0],dictmark[i][1],dictmark[i][2],dictmark[i][3],dictmark[i][4],dictmark[i][5],dictmark[i][6])
-                        )
-            result = True
-        except:
-            result = False
+        # try:
+        with self.conn.cursor() as cursor:
+            for i in range(len(dictmark)):
+                cursor.execute(
+                    f"""
+                    INSERT INTO estimation_{name} (employee_record_card, criterion, description, performance_date, min_score, max_score, performance, comment)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    """,
+                    (dictmark[i][0],dictmark[i][1],dictmark[i][2],dictmark[i][3],dictmark[i][4],dictmark[i][5],dictmark[i][6],dictmark[i][7],)
+                    )
+        result = True
+        # except:
+        #     result = False
         return result
 
     def get_criterias_name_named_block(self, staff_id,name):

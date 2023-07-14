@@ -36,7 +36,7 @@
                 {% for colleague in colleagues_list %}
                   <tr>
                     <td>{{ loop.index }}</td>
-                    <td><a class="colleague-link" href="{{ url_for('colleague_page', colleague_id=colleague[5], head_id=head_id) }}">{{ colleague[1] }}</a></td>
+                    <td><a class="colleague-link" href="{{ url_for('colleague_page_rated', colleague_id=colleague[5], head_id=head_id) }}">{{ colleague[1] }}</a></td>
                     <td>{{ colleague[3] }}</td>
                     <td>{{ colleague[2] }}</td>
                   </tr>

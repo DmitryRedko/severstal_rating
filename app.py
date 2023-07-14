@@ -26,6 +26,7 @@ class FlaskApp():
         self.app.route('/dashboard_rated/<string:head_id>', methods=['GET', 'POST'])(self.dashboard_rated)
         self.app.route('/dashboard_to_rate/<string:head_id>', methods=['GET', 'POST'])(self.dashboard_to_rate)
         self.app.route('/colleague_page/<string:colleague_id>/<string:head_id>', methods=['GET', 'POST'])(self.colleague_page)
+        self.app.route('/colleague_page_rated/<string:colleague_id>/<string:head_id>', methods=['GET', 'POST'])(self.colleague_page_rated)
         self.app.route('/logout')(self.logout)
     
     def run(self):
@@ -113,9 +114,11 @@ class FlaskApp():
     
     def __get_mark_list(self,colleague_num, name, userinfo, date):
         criterias= self.db.get_criterias_name_named_block(colleague_num,name)
-        criterias_list, min_score, max_score = [],[],[]
+        criterias_list, min_score, max_score, description = [],[],[],[]
+        print(criterias)
         for row in criterias:
             criterias_list.append(row[0])
+            description.append(row[1])
             min_score.append(row[2])
             max_score.append(row[3])
         mark_msgs= []
@@ -144,18 +147,15 @@ class FlaskApp():
         listmark = []
         if(flag ==0 and status ==1):
             for i in range(len(criterias_list)):
-                listmark.append([userinfo['employee_record_card'],criterias_list[i],date, min_score[i], max_score[i], marks[i], mark_msgs[i]])
+                listmark.append([userinfo['employee_record_card'],criterias_list[i], description[i] ,date, min_score[i], max_score[i], marks[i], mark_msgs[i]])
         return listmark, status
                 
     @login_required
     def colleague_page(self, colleague_id, head_id):
-        
         listmark_first,listmark_second,status = [],[],0
         status_msg=''
         userinfo = self.db.get_id_userinfo(colleague_id)
         date = datetime.date.today().strftime("%d.%m.%Y")
-        
-        
         if request.method == 'POST' and "submit_button" in request.form:
             listmark_first, status_first =  self.__get_mark_list(colleague_id, 'first', userinfo, date)
             listmark_second, status_second =  self.__get_mark_list(colleague_id, 'second', userinfo, date)
@@ -188,14 +188,29 @@ class FlaskApp():
                                 colleague_id=colleague_id,
                                 head_id=head_id
                                 )
+  
+    @login_required
+    def colleague_page_rated(self, colleague_id, head_id):
+        
+        employee_info = self.db.get_id_userinfo(colleague_id)
+        userinfo = self.db.get_id_userinfo(colleague_id)
+        print_info_first = enumerate(self.db.get_marks_rated_colleagues(employee_info['employee_record_card'],'first'))
+        print_info_second = enumerate(self.db.get_marks_rated_colleagues(employee_info['employee_record_card'],'second'))
 
+        return render_template('dashboard/colleague_page_rated.html', 
+                                print_info_first=print_info_first,
+                                print_info_second=print_info_second,
+                                userinfo=userinfo,
+                                colleague_id=colleague_id,
+                                head_id=head_id
+                                )
+        
     def dashboard_admin(self):
         username= 'admin'
         password = 'admin'
         colleagues = self.db.get_colleagues(password,1)
         return render_template('admin/dashboard_admin.html', username=username, colleagues_list=colleagues)
     
-    @login_required
     def logout(self):
         logout_user()
         return redirect(url_for('home'))
