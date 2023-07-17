@@ -4,6 +4,7 @@ from functools import wraps
 from user import UserManager,AdminManager, UserLogin
 from config import dictionary, db_settings
 from database import DataBase
+from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 
 class FlaskApp():
@@ -23,6 +24,7 @@ class FlaskApp():
         self.app.route('/admin', methods=['GET', 'POST'])(self.admin)
         self.app.route('/dashboard_admin', methods=['GET', 'POST'])(self.dashboard_admin)
         self.app.route('/dashboard/<string:head_id>', methods=['GET', 'POST'])(self.dashboard)
+        self.app.route('/change_password/<string:head_id>', methods=['GET', 'POST'])(self.change_password)
         self.app.route('/dashboard_rated/<string:head_id>', methods=['GET', 'POST'])(self.dashboard_rated)
         self.app.route('/dashboard_to_rate/<string:head_id>', methods=['GET', 'POST'])(self.dashboard_to_rate)
         self.app.route('/colleague_page/<string:colleague_id>/<string:head_id>', methods=['GET', 'POST'])(self.colleague_page)
@@ -36,21 +38,15 @@ class FlaskApp():
         return render_template('base/index.html')
 
     def login(self):
-        # if current_user.is_authenticated:
-        #     print(current_user.get_id())
-        #     return render_template('dashboard/dashboard.html', head_id=current_user.get_id())
-        
         if request.method == 'POST':
             username = request.form['username']
             password = request.form['password']
             if self.user_manager.verify_user(username, password):
-                user_id = self.db.get_num_record_userinfo(password)['user_id']
-                print(user_id)
+                user_id = self.db.get_num_record_userinfo(username)['user_id']
                 user_login = UserLogin().create(user_id)
                 login_user(user_login)
                 session['username'] = username
                 session['password'] = password
-                print("HERE")
                 return redirect(url_for('dashboard', head_id=user_id))
             else:
                 error = 'Invalid credentials. Please try again.'
@@ -58,14 +54,12 @@ class FlaskApp():
         return render_template('dashboard/login.html')
 
     def load_user(self, user_id):
-        print("load_user")
         return UserLogin().get_user_from_DB(user_id, self.db)
 
     def admin(self):
         if request.method == 'POST':
             username = request.form['username']
             password = request.form['password']
-            print(username,password)
             if self.admin_manager.verify_admin(username, password):
                 session['username'] = username
                 return redirect(url_for('dashboard_admin'))
@@ -76,46 +70,32 @@ class FlaskApp():
 
     @login_required
     def dashboard(self, head_id):
-        print(head_id)
         self.db = DataBase(db_settings)
         head_info = self.db.get_id_userinfo(head_id)
-        print(head_info)
+        check_password_status = self.db.get_auterisation_info_by_record_card(head_info['employee_record_card'])[0][2]
         colleagues = self.db.get_colleagues(head_info['employee_record_card'])
-        print()
-        print(colleagues)
         head_username, head_id = head_info['full_name'], head_info['user_id']
-        return render_template('dashboard/dashboard.html', username=head_username, colleagues_list=colleagues, head_id = head_id)
+        return render_template('dashboard/dashboard.html', username=head_username, colleagues_list=colleagues, head_id = head_id, check_password_status = check_password_status)
     
     @login_required
     def dashboard_rated(self, head_id):
-        print(head_id)
         self.db = DataBase(db_settings)
         head_info = self.db.get_id_userinfo(head_id)
-        print(head_info)
         colleagues = self.db.get_colleagues_rated(head_info['employee_record_card'])
-        print()
-        print(colleagues)
         head_username, head_id = head_info['full_name'], head_info['user_id']
         return render_template('dashboard/dashboard_rated.html', username=head_username, colleagues_list=colleagues, head_id = head_id)
     
     @login_required
     def dashboard_to_rate(self, head_id):
-        print(head_id)
         self.db = DataBase(db_settings)
         head_info = self.db.get_id_userinfo(head_id)
-        print(head_info)
         colleagues = self.db.get_colleagues_to_rate(head_info['employee_record_card'])
-        print()
-        print(colleagues)
         head_username, head_id = head_info['full_name'], head_info['user_id']
         return render_template('dashboard/dashboard_to_rate.html', username=head_username, colleagues_list=colleagues, head_id = head_id)
-    
-    
     
     def __get_mark_list(self,colleague_num, name, userinfo, date):
         criterias= self.db.get_criterias_name_named_block(colleague_num,name)
         criterias_list, min_score, max_score, description = [],[],[],[]
-        print(criterias)
         for row in criterias:
             criterias_list.append(row[0])
             description.append(row[1])
@@ -129,9 +109,7 @@ class FlaskApp():
             mark=0
             if(name =='first'):
                 mark = request.form.get(f"markf_{i}")
-                print("MARK:", mark)
                 mark_msgs.append(request.form.get(f"messf_{i}"))
-                print("MESS:", mark_msgs)
             else:
                 mark = request.form.get(f"marks_{i}")
                 mark_msgs.append(request.form.get(f"messs_{i}"))
@@ -141,7 +119,6 @@ class FlaskApp():
             else:
                 flag = 1
                 break    
-        print(len(marks), len(criterias_list))
         if(len(marks)==len(criterias_list) and flag == 0):
             status = 1
         listmark = []
@@ -204,14 +181,29 @@ class FlaskApp():
                                 colleague_id=colleague_id,
                                 head_id=head_id
                                 )
-        
-    def dashboard_admin(self):
-        username= 'admin'
-        password = 'admin'
-        colleagues = self.db.get_colleagues(password,1)
-        return render_template('admin/dashboard_admin.html', username=username, colleagues_list=colleagues)
-    
+
+    @login_required
+    def change_password(self,head_id):
+        if request.method == 'POST':
+            password_new = request.form['password_new']
+            password_new_again = request.form['password_new_again']
+            userinfo = self.db.get_id_userinfo(head_id)
+            can_change_flag =  self.db.get_auterisation_info_by_record_card(userinfo['employee_record_card'])[0][2]
+            if(password_new_again == password_new and can_change_flag):
+                self.db.set_new_password(userinfo['employee_record_card'], password_new)
+                flash('Пароль успешно изменен.', category ='success')
+            elif(password_new_again!= password_new):
+                flash('Пароли не совпадают.', category = 'error')
+            else:
+                flash('Вы не можете изменить пароль.', category = 'error')
+        return render_template('dashboard/change_password.html', head_id = head_id)
+   
     def logout(self):
         logout_user()
         return redirect(url_for('home'))
+        
+    def dashboard_admin(self):
+        return render_template('admin/dashboard_admin.html')
+    
+
 

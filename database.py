@@ -90,18 +90,17 @@ class DataBase:
         return result
     
     
-    def get_head_colleagues(self):
+    def get_auterisation_info(self):
         result = ''
         try:
             with self.conn.cursor() as cursor:
                 cursor.execute(
                     """
-                    SELECT employee_full_name, employee_record_card
-                    FROM staff
-                    WHERE employee_record_card IN (SELECT DISTINCT head_record_card FROM staff);
+                    SELECT head_record_card, head_password, can_be_changed
+                    FROM authentication
                     """
                     )
-                result = dict(cursor.fetchall())
+                result = cursor.fetchall()
         except:
             result = False
             
@@ -169,19 +168,19 @@ class DataBase:
     
     def add_mark_to_base(self, dictmark, name):
         result = ''
-        # try:
-        with self.conn.cursor() as cursor:
-            for i in range(len(dictmark)):
-                cursor.execute(
-                    f"""
-                    INSERT INTO estimation_{name} (employee_record_card, criterion, description, performance_date, min_score, max_score, performance, comment)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                    """,
-                    (dictmark[i][0],dictmark[i][1],dictmark[i][2],dictmark[i][3],dictmark[i][4],dictmark[i][5],dictmark[i][6],dictmark[i][7],)
-                    )
-        result = True
-        # except:
-        #     result = False
+        try:
+            with self.conn.cursor() as cursor:
+                for i in range(len(dictmark)):
+                    cursor.execute(
+                        f"""
+                        INSERT INTO estimation_{name} (employee_record_card, criterion, description, performance_date, min_score, max_score, performance, comment)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        """,
+                        (dictmark[i][0],dictmark[i][1],dictmark[i][2],dictmark[i][3],dictmark[i][4],dictmark[i][5],dictmark[i][6],dictmark[i][7],)
+                        )
+            result = True
+        except:
+            result = False
         return result
 
     def get_criterias_name_named_block(self, staff_id,name):
@@ -234,3 +233,46 @@ class DataBase:
             )
             result = cursor.fetchall()
         return result != []
+    
+    def set_new_password(self, head_id, new_password):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    UPDATE authentication
+                    SET head_password = %s
+                    WHERE head_record_card = %s;
+                    """,
+                    (new_password, head_id,)
+                )
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    UPDATE authentication
+                    SET can_be_changed = false
+                    WHERE head_record_card = %s;
+                    """,
+                    (head_id,)
+                )
+        except:
+            result = "Ошибка обращения к базе данных"
+        return result
+    
+    def get_auterisation_info_by_record_card(self,head_record_card):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT head_record_card, head_password, can_be_changed
+                    FROM authentication
+                    WHERE head_record_card = %s
+                    """,
+                    (head_record_card,)
+                    )
+                result = cursor.fetchall()
+        except:
+            result = False
+        return result
+    

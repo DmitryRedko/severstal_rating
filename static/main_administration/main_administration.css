@@ -6,16 +6,14 @@
     background-color: rgba(255, 255, 255, 0);
 }
 
-.page-footer {
-    background: #9984D4;
-}
-
 .form-container {
     background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
     border-radius: 10px;
-    max-width: 400px;
-    margin: 0 auto;
+    margin: 0;
+    width: 98.5vw; /* Use viewport width to cover the entire screen */
+    height: 100vh; /* Use viewport height to cover the entire screen */
+    box-sizing: border-box; /* Add box-sizing to include padding in width calculation */
 }
 
 .form-container h1 {
@@ -36,4 +34,50 @@
     background-color: #4CAF50;
     color: white;
     cursor: pointer;
+}
+
+.content-container {
+    display: flex;
+    height: 100%;
+}
+
+.button-container {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.square-button {
+    margin: 5px 0;
+    width: 98%;
+    height: 100px;
+    border: none;
+    background-color: #5378d3;
+    color: #fff;
+    font-size: 25px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px; 
+}
+
+.square-button:hover {
+    margin: 5px 0;
+    width: 98%;
+    height: 100px;
+    border: none;
+    background-color: #4562a0;
+    color: #fff;
+    font-size: 25px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+}
+
+.sidebar {
+    width: 50%;
+    background-color: #e9e9e9;
+    height: 100%;
+    margin-left: 20px;
 }

@@ -1,9 +1,16 @@
 from flask_login import UserMixin
 class UserManager:
-    def __init__(self,db):
-        self.users = db.get_head_colleagues()
-
+    def __init__(self, db):
+        self.db = db
+        
+    def __update_info(self):
+        users = self.db.get_auterisation_info()
+        self.users = {}
+        for val in users:
+            self.users[val[0]] = val[1]
+    
     def verify_user(self, username, password):
+        self.__update_info()
         return username in self.users and self.users[username] == password
 
     def is_username_taken(self, username):

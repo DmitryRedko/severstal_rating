@@ -4,48 +4,32 @@
     <title>Rating menu</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard/main_dashboard.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_administration/main_administration.css') }}">
 </head>
 <body>
     <header class="page-header">
         <div class="brand">
-          <a href="{{ url_for('home') }}"><img src="static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
+            <a href="{{ url_for('home') }}"><img src="static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
         </div>
         <div class="buttons">
-          <div class="username">{{ username }}</div>  <!-- Выводим имя руководителя -->
-          <a href="{{ url_for('admin') }}" class="headerbottom">Rating</a>
-          <a href="{{ url_for('logout') }}" class="headerbottom" >Logout</a>
+            <a href="{{ url_for('logout') }}" class="headerbottom" >Logout</a>
         </div>
     </header>
 
     <main class="form-container">
-        <div class="CollegList">
-          <h1>List of Colleagues</h1>
-          <table>
-              <thead>
-                  <tr>
-                      <th>ID</th>
-                      <th>Табельный номер сотрудника</th>
-                      <th>ФИО Сотрудника</th>
-                      <th>Отдел</th>
-                      <th>Должность</th>
-                      <th>Табельный номер руководителя</th>
-                  </tr>
-              </thead>
-              <tbody>
-                {% for colleague in colleagues_list %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ colleague[0] }}</td>
-                    <td>{{ colleague[1] }}</td>
-                    <td>{{ colleague[3] }}</td>
-                    <td>{{ colleague[2] }}</td>
-                    <td>{{ colleague[4] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-          </table>
-      </div>
+        <div class="content-container">
+            
+            <div class="button-container">
+                <a class="square-button" href="#">Button 1</a>
+                <a class="square-button">Button 2</a>
+                <a class="square-button">Button 3</a>
+                <!-- Добавьте нужное количество кнопок -->
+            </div>
+
+            <div class="sidebar">
+                <!-- Содержимое боковой панели -->
+            </div>
+        </div>
     </main>
 </body>
 </html>
