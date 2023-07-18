@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Rating menu</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard/colleague_page.css') }}">
+</head>
+
+<body>
+    <header class="page-header">
+        <div class="brand">
+            <a href="{{ url_for('dashboard_admin') }}"><img
+                src="/static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
+        </div>
+        <div class="buttons">
+            <div class="username">Оцениваемый: {{ userinfo.full_name }}</div>
+            <div class="username">Отдел: {{ userinfo.department }}</div>
+            <div class="username">Должность: {{ userinfo.department_position }}</div>
+            <a href="{{ url_for('head_statistic', head_id=head_id) }}" class="headerbottom">Список оцениваемых</a>
+            <a href="{{ url_for('dashboard_admin', head_id=head_id) }}" class="headerbottom">Меню</a>
+            <a href="{{ url_for('logout') }}" class="headerbottom">Деавторизация</a>
+        </div>
+    </header>
+
+    <main class="form-container">
+        <form action="{{ url_for('colleague_page', colleague_id=colleague_id, head_id=head_id) }}" method="post">
+            <div>Первый блок критериев:</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Критерий</th>
+                        <th>Описание</th>
+                        <th>Дата оценивания</th>
+                        <th>Шкала</th>
+                        <th>Оценка сотрудника</th>
+                        <th>Комментарии/замечания</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for index,item in print_info_first %}
+                    <tr>
+                        <td>{{ item.1 }}</td>
+                        <td>{{ item.2 }}</td>
+                        <td>{{ item.3}}</td>
+                        <td>{{item.4}}-{{item.5}}</td>
+                        <td> {{item.6}} </td>
+                        <td> {{item.7}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div>Второй блок критериев:</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Критерий</th>
+                        <th>Описание</th>
+                        <th>Дата оценивания</th>
+                        <th>Шкала</th>
+                        <th>Оценка сотрудника</th>
+                        <th>Комментарии/замечания</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for index,item in print_info_second %}
+                    <tr>
+                        <td>{{ item.1 }}</td>
+                        <td>{{ item.2 }}</td>
+                        <td>{{ item.3}}</td>
+                        <td>{{item.4}}-{{item.5}}</td>
+                        <td> {{item.6}} </td>
+                        <td> {{item.7}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% for cat, msg in get_flashed_messages(True) %}
+            <div class='status-message_{{cat}}'>{{msg}}</div>
+            {% endfor %}
+
+        </form>
+    </main>
+</body>
+
+</html>

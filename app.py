@@ -32,6 +32,9 @@ class FlaskApp():
         self.app.route('/colleague_page_rated/<string:colleague_id>/<string:head_id>',methods=['GET','POST'])(self.colleague_page_rated)
         self.app.route('/dashboard_main_heads',methods=['GET','POST'])(self.dashboard_main_heads)
         self.app.route('/head_statistic/<string:head_id>',methods=['GET','POST'])(self.head_statistic)
+        self.app.route('/head_statistic_rated/<string:head_id>',methods=['GET','POST'])(self.head_statistic_rated)
+        self.app.route('/head_statistic_to_rate/<string:head_id>',methods=['GET','POST'])(self.head_statistic_to_rate)
+        self.app.route('/head_colleague_page_rated/<string:colleague_id>/<string:head_id>',methods=['GET','POST'])(self.head_colleague_page_rated)
         self.app.route('/logout')(self.logout)
 
     def run(self):
@@ -99,7 +102,6 @@ class FlaskApp():
 
     @login_required
     def dashboard_to_rate(self, head_id):
-        self.db = DataBase(db_settings)
         head_info = self.db.get_id_userinfo(head_id)
         colleagues = self.db.get_colleagues_to_rate(
             head_info['employee_record_card'])
@@ -266,7 +268,7 @@ class FlaskApp():
 
         print(head_record_info)
 
-        return render_template('admin/dashboard_main_heads.html',
+        return render_template('admin/rate_statistic/dashboard_main_heads.html',
                                head_record_nums=head_record_info,
                                colleagues=colleagues,
                                colleagues_reated=colleagues_reated,
@@ -277,8 +279,66 @@ class FlaskApp():
         head_info = self.db.get_id_userinfo(head_id)
         colleagues = self.db.get_colleagues(head_info['employee_record_card'])
         head_username, head_id = head_info['full_name'], head_info['user_id']
-        return render_template('admin/head_statistic.html',
+        return render_template('admin/rate_statistic/head_statistic.html',
                                username=head_username,
                                colleagues_list=colleagues,
                                head_id=head_id,
+                               )
+    
+    def head_statistic_rated(self, head_id):
+        head_info = self.db.get_id_userinfo(head_id)
+        colleagues = self.db.get_colleagues_rated(
+            head_info['employee_record_card'])
+        head_username, head_id = head_info['full_name'], head_info['user_id']
+        return render_template(
+            'admin/rate_statistic/head_statistic_rated.html',
+            username=head_username,
+            colleagues_list=colleagues,
+            head_id=head_id)
+        
+    def head_statistic_to_rate(self, head_id):
+        head_info = self.db.get_id_userinfo(head_id)
+        colleagues = self.db.get_colleagues_to_rate(
+            head_info['employee_record_card'])
+        head_username, head_id = head_info['full_name'], head_info['user_id']
+        return render_template(
+            'admin/rate_statistic/head_statistic_to_rate.html',
+            username=head_username,
+            colleagues_list=colleagues,
+            head_id=head_id)
+    
+    def head_colleague_page_rated(self, colleague_id, head_id):
+        employee_info = self.db.get_id_userinfo(colleague_id)
+        userinfo = self.db.get_id_userinfo(colleague_id)
+        print_info_first = enumerate(
+            self.db.get_marks_rated_colleagues(
+                employee_info['employee_record_card'], 'first'))
+        print_info_second = enumerate(
+            self.db.get_marks_rated_colleagues(
+                employee_info['employee_record_card'], 'second'))
+
+        return render_template('admin/rate_statistic/head_colleague_page_rated.html',
+                               print_info_first=print_info_first,
+                               print_info_second=print_info_second,
+                               userinfo=userinfo,
+                               colleague_id=colleague_id,
+                               head_id=head_id
+                               )
+    
+    def head_colleague_page_rated(self, colleague_id, head_id):
+        employee_info = self.db.get_id_userinfo(colleague_id)
+        userinfo = self.db.get_id_userinfo(colleague_id)
+        print_info_first = enumerate(
+            self.db.get_marks_rated_colleagues(
+                employee_info['employee_record_card'], 'first'))
+        print_info_second = enumerate(
+            self.db.get_marks_rated_colleagues(
+                employee_info['employee_record_card'], 'second'))
+
+        return render_template('admin/rate_statistic/head_colleague_page_rated.html',
+                               print_info_first=print_info_first,
+                               print_info_second=print_info_second,
+                               userinfo=userinfo,
+                               colleague_id=colleague_id,
+                               head_id=head_id
                                )
