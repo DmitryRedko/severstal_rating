@@ -11,9 +11,9 @@
     padding: 20px;
     border-radius: 10px;
     margin: 0;
-    width: 98.5vw; /* Use viewport width to cover the entire screen */
-    height: 100vh; /* Use viewport height to cover the entire screen */
-    box-sizing: border-box; /* Add box-sizing to include padding in width calculation */
+    width: 98.5vw;
+    height: 100vh;
+    box-sizing: border-box;
 }
 
 .form-container h1 {
@@ -58,7 +58,7 @@
     border-radius: 20px;
     display: flex;
     align-items: center;
-    padding-left: 20px; 
+    padding-left: 20px;
 }
 
 .square-button:hover {

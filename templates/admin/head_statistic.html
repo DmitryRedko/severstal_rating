@@ -11,17 +11,14 @@
 <body>
   <header class="page-header">
     <div class="brand">
-      <a href="{{ url_for('dashboard', head_id=head_id) }}"><img
-          src="../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
-      <a href="{{ url_for('dashboard', head_id=head_id) }}" class="headerbottom">Список оцениваемых</a>
-      <a href="{{ url_for('dashboard_to_rate', head_id=head_id) }}" class="headerbottom">Предстоит оценить</a>
-      <a href="{{ url_for('dashboard_rated', head_id=head_id) }}" class="headerbottom">Уже оценены</a>
+      <a href="{{ url_for('dashboard_admin') }}"><img src="../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png"
+          alt="brand"></a>
+      <a href="{{ url_for('head_statistic', head_id=head_id) }}" class="headerbottom">Список оцениваемых</a>
+      <a href="{{ url_for('head_statistic_to_rate', head_id=head_id) }}" class="headerbottom">Предстоит оценить</a>
+      <a href="{{ url_for('head_statistic_rated', head_id=head_id) }}" class="headerbottom">Уже оценены</a>
     </div>
     <div class="buttons">
       <div class="username">{{ username }}</div>
-      {% if check_password_status %}
-      <a href="{{ url_for('change_password', head_id=head_id) }}" class="headerbottom">Смена пароля</a>
-      {% endif %}
       <a href="{{ url_for('logout') }}" class="headerbottom">Деавторизация</a>
     </div>
   </header>
@@ -42,7 +39,9 @@
           {% for colleague in colleagues_list %}
           <tr>
             <td>{{ loop.index }}</td>
-            <td>{{ colleague[1] }}</td>
+            <td><a class="colleague-link"
+                href="{{ url_for('colleague_page_rated', colleague_id=colleague[5], head_id=head_id) }}">{{ colleague[1] }}</a>
+            </td>
             <td>{{ colleague[3] }}</td>
             <td>{{ colleague[2] }}</td>
           </tr>

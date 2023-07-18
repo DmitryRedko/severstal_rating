@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Login Page</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login/main_login.css') }}">
 </head>
+
 <body>
     <header class="page-header">
         <div class="brand">
-          <a href="{{ url_for('home') }}"><img src="static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
+            <a href="{{ url_for('home') }}"><img src="static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png"
+                    alt="brand"></a>
         </div>
         <div class="buttons">
-          <a href="{{ url_for('login') }}" class="headerbottom">Login</a>
-          <a href="{{ url_for('admin') }}" class="headerbottom">Admin</a>
+            <a href="{{ url_for('login') }}" class="headerbottom">Login</a>
+            <a href="{{ url_for('admin') }}" class="headerbottom">Admin</a>
         </div>
     </header>
 
     <main class="form-container">
         <h1>Login</h1>
         {% if error %}
-            <p>{{ error }}</p>
+        <p>{{ error }}</p>
         {% endif %}
         <form action="{{ url_for('login') }}" method="POST">
-            <input type="text" name="username" value = "002" placeholder="Username"><br>
-            <input type="password" name="password" value = "002" placeholder="Password"><br>
+            <input type="text" name="username" value="002" placeholder="Username"><br>
+            <input type="password" name="password" value="002" placeholder="Password"><br>
             <input type="submit" value="Login">
         </form>
     </main>
 </body>
+
 </html>

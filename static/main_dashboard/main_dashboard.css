@@ -15,9 +15,9 @@
     padding: 20px;
     border-radius: 10px;
     margin: 0;
-    width: 98.5vw; /* Use viewport width to cover the entire screen */
-    height: 100vh; /* Use viewport height to cover the entire screen */
-    box-sizing: border-box; /* Add box-sizing to include padding in width calculation */
+    width: 98.5vw;
+    height: 100vh;
+    box-sizing: border-box;
 }
 
 .form-container h1 {
@@ -46,7 +46,8 @@ table {
     width: 100%;
 }
 
-th, td {
+th,
+td {
     padding: 8px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -64,5 +65,5 @@ th {
 .colleague-link {
     text-decoration: none;
     color: inherit;
-    color:  #244391;
+    color: #244391;
 }

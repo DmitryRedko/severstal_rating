@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Rating menu</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard/colleague_page.css') }}">
 </head>
+
 <body>
     <header class="page-header">
         <div class="brand">
-            <a href="{{ url_for('dashboard', head_id=head_id) }}"><img src="../../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
+            <a href="{{ url_for('dashboard', head_id=head_id) }}"><img
+                    src="../../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
         </div>
         <div class="buttons">
             <div class="username">Оцениваемый: {{ userinfo.full_name }}</div>
             <div class="username">Отдел: {{ userinfo.department }}</div>
             <div class="username">Должность: {{ userinfo.department_position }}</div>
             <a href="{{ url_for('dashboard', head_id=head_id) }}" class="headerbottom">Список оцениваемых</a>
-            <a href="{{ url_for('logout') }}" class="headerbottom" >Деавторизация</a>
+            <a href="{{ url_for('logout') }}" class="headerbottom">Деавторизация</a>
         </div>
     </header>
 
     <main class="form-container">
-        <form  action="{{ url_for('colleague_page', colleague_id=colleague_id, head_id=head_id) }}" method="post" >
+        <form action="{{ url_for('colleague_page', colleague_id=colleague_id, head_id=head_id) }}" method="post">
             <div>Первый блок критериев:</div>
             <table>
                 <thead>
@@ -42,10 +45,11 @@
                         <td>{{ item.2}}</td>
                         <td>{{ item.3 }}-{{ item.4 }}</td>
                         <td>
-                            <input type="number" style="width: 200px;" min="{{item.3}}" step="0.001" max="{{item.4}}" id="markf_{{ index }}" name="markf_{{ index }}">
+                            <input type="number" style="width: 200px;" min="{{item.3}}" step="0.001" max="{{item.4}}"
+                                id="markf_{{ index }}" name="markf_{{ index }}">
                         </td>
                         <td>
-                            <textarea type="text"  name="messf_{{ index }}" maxlength="1000"></textarea>
+                            <textarea type="text" name="messf_{{ index }}" maxlength="1000"></textarea>
                         </td>
                     </tr>
                     {% endfor %}
@@ -71,7 +75,8 @@
                         <td>{{ item.2}}</td>
                         <td>{{item.3}}-{{item.4}}</td>
                         <td>
-                            <input type="number" style="width: 200px;" min="{{item.3}}" step="0.001" max="{{item.4}}" id="marks_{{ index }}" name="marks_{{ index }}">
+                            <input type="number" style="width: 200px;" min="{{item.3}}" step="0.001" max="{{item.4}}"
+                                id="marks_{{ index }}" name="marks_{{ index }}">
                         </td>
                         <td>
                             <textarea type="text" name="messs_{{ index }}" maxlength="1000"></textarea>
@@ -80,13 +85,14 @@
                     {% endfor %}
                 </tbody>
             </table>
-            
+
             {% for cat, msg in get_flashed_messages(True) %}
-            <div class = 'status-message_{{cat}}'>{{msg}}</div>
+            <div class='status-message_{{cat}}'>{{msg}}</div>
             {% endfor %}
-            
+
             <button class="submit-button" type="submit" name="submit_button"> Подтвердить </button>
         </form>
     </main>
 </body>
+
 </html>

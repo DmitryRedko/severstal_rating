@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Rating menu</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='main_administration/dashboard_main_heads.css') }}">
+</head>
+
+<body>
+    <header class="page-header">
+        <div class="brand">
+            <a href="{{ url_for('dashboard', head_id=head_id) }}"><img
+                    src="../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
+        </div>
+        <div class="buttons">
+            <a href="{{ url_for('dashboard_rated', head_id=head_id) }}" class="headerbottom">Меню</a>
+            <a href="{{ url_for('logout') }}" class="headerbottom">Деавторизация</a>
+        </div>
+    </header>
+
+    <main class="form-container">
+        <div class="CollegList">
+            <h1>Статистика по руководителям отделов</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ФИО Сотрудника</th>
+                        <th>Отдел</th>
+                        <th>Должность</th>
+                        <th style="text-align: center;">Оценено</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for head in head_record_nums %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            <a class="colleague-link"
+                                href="{{ url_for('head_statistic', head_id = head.user_id) }}">{{ head.full_name }}</a>
+                        </td>
+                        <td>{{ head.department }}</td>
+                        <td>{{ head.department_position }}</td>
+                        <td class="last-td">
+                            <div class="progress-bar">
+                                <div class="progress-fill-{{color[loop.index-1]}}"
+                                    style="width: {{ colleagues_reated[loop.index -1]/colleagues[loop.index -1]*100+1 }}%;">
+                                </div>
+                                <div class="progress-text">
+                                    <span>{{ colleagues_reated[loop.index -1] }} из
+                                        {{ colleagues[loop.index -1] }}</span>
+                                </div>
+                            </div>
+                            <span>{{ colleagues_reated[loop.index -1] }} из {{ colleagues[loop.index -1] }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+
+</html>

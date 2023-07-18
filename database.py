@@ -1,5 +1,6 @@
 import psycopg2
 
+
 class DataBase:
     def __init__(self, db_settings):
         self.conn = psycopg2.connect(
@@ -9,7 +10,7 @@ class DataBase:
             database=db_settings['dbname']
         )
         self.conn.autocommit = True
-    
+
     def get_colleagues(self, head_record_card):
         result = ''
         try:
@@ -23,11 +24,10 @@ class DataBase:
                     (head_record_card,)
                 )
                 result = cursor.fetchall()
-        except:
+        except BaseException:
             result = False
         return result
-    
-    
+
     def get_colleagues_rated(self, head_record_card):
         result = ''
         try:
@@ -43,11 +43,10 @@ class DataBase:
                     (head_record_card,)
                 )
                 result = cursor.fetchall()
-        except:
+        except BaseException:
             result = False
         return result
-    
-    
+
     def get_colleagues_to_rate(self, head_record_card):
         result = ''
         # try:
@@ -66,7 +65,7 @@ class DataBase:
         # except:
         #     result = False
         return result
-    
+
     def get_marks_rated_colleagues(self, employee_record_card, name):
         result = ''
         try:
@@ -85,11 +84,10 @@ class DataBase:
                     (employee_record_card, employee_record_card,)
                 )
                 result = cursor.fetchall()
-        except:
+        except BaseException:
             result = False
         return result
-    
-    
+
     def get_auterisation_info(self):
         result = ''
         try:
@@ -99,13 +97,13 @@ class DataBase:
                     SELECT head_record_card, head_password, can_be_changed
                     FROM authentication
                     """
-                    )
+                )
                 result = cursor.fetchall()
-        except:
+        except BaseException:
             result = False
-            
+
         return result
-    
+
     def get_id_userinfo(self, number):
         infodict = {}
         result = ''
@@ -131,11 +129,11 @@ class DataBase:
                         'head_record_card': result[0][4],
                         'user_id': result[0][5]
                     }
-        except:
+        except BaseException:
             result = "Ошибка обращения к базе данных"
             infodict = False
         return infodict
-    
+
     def get_num_record_userinfo(self, number):
         infodict = {}
         result = ''
@@ -161,11 +159,11 @@ class DataBase:
                         'head_record_card': result[0][4],
                         'user_id': result[0][5]
                     }
-        except:
+        except BaseException:
             result = "Ошибка обращения к базе данных"
             infodict = False
         return infodict
-    
+
     def add_mark_to_base(self, dictmark, name):
         result = ''
         try:
@@ -176,14 +174,21 @@ class DataBase:
                         INSERT INTO estimation_{name} (employee_record_card, criterion, description, performance_date, min_score, max_score, performance, comment)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                         """,
-                        (dictmark[i][0],dictmark[i][1],dictmark[i][2],dictmark[i][3],dictmark[i][4],dictmark[i][5],dictmark[i][6],dictmark[i][7],)
-                        )
+                        (dictmark[i][0],
+                         dictmark[i][1],
+                            dictmark[i][2],
+                            dictmark[i][3],
+                            dictmark[i][4],
+                            dictmark[i][5],
+                            dictmark[i][6],
+                            dictmark[i][7],
+                         ))
             result = True
-        except:
+        except BaseException:
             result = False
         return result
 
-    def get_criterias_name_named_block(self, staff_id,name):
+    def get_criterias_name_named_block(self, staff_id, name):
         result = ''
         try:
             with self.conn.cursor() as cursor:
@@ -197,11 +202,11 @@ class DataBase:
                     (staff_id,)
                 )
                 result = cursor.fetchall()
-        except:
+        except BaseException:
             result = "Ошибка обращения к базе данных"
         return result
 
-    def update_rating_status(self, colleague_id,head_id,status):
+    def update_rating_status(self, colleague_id, head_id, status):
         print("HERE")
         result = ''
         try:
@@ -213,13 +218,13 @@ class DataBase:
                     ON CONFLICT (head_id, employee_id)
                     DO UPDATE SET rate_status = %s;
                     """,
-                    (head_id,colleague_id,bool(status),bool(status))
+                    (head_id, colleague_id, bool(status), bool(status))
                 )
-        except:
+        except BaseException:
             result = "Ошибка обращения к базе данных"
         return result
-    
-    def get_rating_status(self, colleague_id,head_id):
+
+    def get_rating_status(self, colleague_id, head_id):
         result = ''
         with self.conn.cursor() as cursor:
             cursor.execute(
@@ -229,11 +234,11 @@ class DataBase:
                 WHERE head_id = %s
                 AND employee_id = %s;
                 """,
-                (head_id,colleague_id,)
+                (head_id, colleague_id,)
             )
             result = cursor.fetchall()
         return result != []
-    
+
     def set_new_password(self, head_id, new_password):
         result = ''
         try:
@@ -255,11 +260,11 @@ class DataBase:
                     """,
                     (head_id,)
                 )
-        except:
+        except BaseException:
             result = "Ошибка обращения к базе данных"
         return result
-    
-    def get_auterisation_info_by_record_card(self,head_record_card):
+
+    def get_auterisation_info_by_record_card(self, head_record_card):
         result = ''
         try:
             with self.conn.cursor() as cursor:
@@ -270,9 +275,8 @@ class DataBase:
                     WHERE head_record_card = %s
                     """,
                     (head_record_card,)
-                    )
+                )
                 result = cursor.fetchall()
-        except:
+        except BaseException:
             result = False
         return result
-    
