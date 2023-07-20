@@ -1,15 +1,20 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from flask_login import LoginManager, login_user, logout_user, current_user, login_required
-from functools import wraps
+from flask_login import LoginManager, login_user, logout_user, login_required
 from user import UserManager, AdminManager, UserLogin
 from config import dictionary, db_settings
 from database import DataBase
+import pandas as pd
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime as dt
+import matplotlib.pyplot as plt
 import datetime
-
+import numpy as np
+import io
+import base64
 
 class FlaskApp():
     def __init__(self):
+        self.created_df = None
         self.db = DataBase(db_settings)
         self.app = Flask(__name__)
         self.login_manager = LoginManager(self.app)
@@ -35,8 +40,11 @@ class FlaskApp():
         self.app.route('/head_statistic_rated/<string:head_id>',methods=['GET','POST'])(self.head_statistic_rated)
         self.app.route('/head_statistic_to_rate/<string:head_id>',methods=['GET','POST'])(self.head_statistic_to_rate)
         self.app.route('/head_colleague_page_rated/<string:colleague_id>/<string:head_id>',methods=['GET','POST'])(self.head_colleague_page_rated)
+        self.app.route('/create_report',methods=['GET','POST'])(self.create_report)
+        self.app.route('/admin_rate_access',methods=['GET','POST'])(self.admin_rate_access)
+        self.app.route('/page_access_colleague_page/<string:colleague_id>/<string:head_id>',methods=['GET','POST'])(self.page_access_colleague_page)
         self.app.route('/logout')(self.logout)
-
+        
     def run(self):
         self.app.run(debug=True, port=5000)
 
@@ -164,8 +172,12 @@ class FlaskApp():
                 colleague_id, 'first', userinfo, date)
             listmark_second, status_second = self.__get_mark_list(
                 colleague_id, 'second', userinfo, date)
-            if (status_first == 1 and status_second ==
-                    1 and self.db.get_rating_status(colleague_id, head_id) == 0):
+            flag = 0
+            try:
+                flag = self.db.get_current_rate_status(colleague_id, head_id)[0][0]
+            except:
+                flag = False
+            if (status_first == 1 and status_second == 1 and flag == False):
                 status1 = self.db.add_mark_to_base(listmark_first, 'first')
                 status2 = self.db.add_mark_to_base(listmark_second, 'second')
                 if (status1 and status2):
@@ -244,8 +256,59 @@ class FlaskApp():
     def logout(self):
         logout_user()
         return redirect(url_for('home'))
+    
+    def __init_report_df(self):
+        max_scores = pd.DataFrame(self.db.get_max_scores(), columns=['head_department', 'department', 'department_position', 'final_total_max_score'])
+        marks = pd.DataFrame(self.db.get_staff_marks(), columns=['employee_record_card', 'performance_date', 'final_total_performance'])
+        info = pd.DataFrame([self.db.get_num_record_userinfo(row) for row in list(marks['employee_record_card'])])
+        headinfo = pd.DataFrame([self.db.get_num_record_userinfo(row) for row in list(info['head_record_card'])])
+        headinfo = (headinfo[['full_name', 'employee_record_card']]).rename(columns={'full_name': 'head_name','employee_record_card': 'head_record_card'})
+    
+        merged_table = pd.merge(info, marks, on='employee_record_card', how='right')
+        merged_table = pd.merge(merged_table, max_scores, on=['head_department', 'department', 'department_position'], how='left')
+        merged_table = pd.merge(merged_table, headinfo, on='head_record_card',  how='inner')
+        
+        self.created_df = merged_table.drop_duplicates()
+        
+        # print()
+        # print(max_scores)
+        # print()
+        # print(marks)
+        # print()
+        # print(info)
+        # print()
+        # print(headinfo)
+        
+    # Сделаю попозже
+    # def __create_statistic_plot(self):
+    #     labels = ['Еще не проголосовали', 'Проголосовали', ]
+    #     sizes = [len(self.created_df), 40]
+    #     colors = ['red', 'green']
+
+    #     plt.figure()
+    #     plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+    #     plt.axis('equal')  
+
+
+    #     # Сохраняем график в буфер
+    #     buffer = io.BytesIO()
+    #     plt.savefig(buffer, format='png')
+    #     buffer.seek(0)
+
+    #     # Преобразуем график в формат base64 для передачи в HTML
+    #     plot_data = base64.b64encode(buffer.getvalue()).decode()
+
+    #     buffer.close()
+        
+    #     return plot_data
 
     def dashboard_admin(self):
+        try:
+            self.__init_report_df()
+        except Exception:
+            pass
+        
+        
         return render_template('admin/dashboard_admin.html')
 
     def dashboard_main_heads(self):
@@ -324,8 +387,116 @@ class FlaskApp():
                                colleague_id=colleague_id,
                                head_id=head_id
                                )
+        
+    def create_report(self):
+        flag = 0
+        try:
+            self.__init_report_df()
+        except Exception:
+            flag = 1
+        
+        head_department_list = self.db.get_head_departments_list()
+        head_department_enumerated = list(enumerate(head_department_list))
+        try:
+            if(flag == 1):
+                raise ValueError
+            coefficient = round(self.created_df['final_total_max_score'].max(), 2)
+        except:
+            coefficient = "Не может быть вычислен"
+            
+        if('report' in request.form):
+            writer = pd.ExcelWriter('Report.xlsx', engine="openpyxl")
+            filtred_head_department=''
+            start_date_str = request.form['start_date']
+            end_date_str = request.form['end_date']
+            self.report_name = request.form.get('report_name')
+            if(self.report_name is None or self.report_name== ''):
+                self.report_name = 'Performance_report'
+            start_date=''
+            end_date=''
+            if(start_date_str is None or end_date_str is None or start_date_str == '' or end_date_str == ''):
+                flash('Промежуток времени не задан.', category='error')
+                flag = 1
+            else:
+                start_date = dt.strptime(start_date_str, "%Y-%m-%d").date()
+                end_date = dt.strptime(end_date_str, "%Y-%m-%d").date()
+            head_department_on = []
+            for index, department in head_department_enumerated:
+                head_department_on.append(department) if request.form.get(str(index)) == 'on' else None
+            
+            if(len(head_department_on) == 0):
+                flash('Укажите отделы, для которых нужно сформировать отчет.', category='error')
+                flag = 1
+            
+            if(flag == 0 and self.created_df is not None):
+                for head_department in head_department_on:
+                    filtred_head_department = (self.created_df[self.created_df['head_department'] == head_department])
+                    filtred_head_department = filtred_head_department.loc[(filtred_head_department['performance_date'] < end_date) & (filtred_head_department['performance_date'] >= start_date)]
+                    filtred_head_department['final_total_performance'] = filtred_head_department['final_total_performance']/filtred_head_department['final_total_max_score']*coefficient
+                    print(filtred_head_department.columns)
+                    filtred_head_department['comment'] = None
+                    excel_df = filtred_head_department[['department','full_name','department_position', 'final_total_performance','comment','head_name']]
+                    new_headers = {
+                        'department': 'Отдел',
+                        'full_name': 'Полное имя',
+                        'department_position': 'Должность',
+                        'final_total_performance': 'Итоговая производительность',
+                        'comment': 'Комментарий',
+                        'head_name': 'Имя руководителя'
+                    }
+                    excel_df = excel_df.rename(columns=new_headers)
+                    excel_df.to_excel(writer, sheet_name=head_department, index=False)
+                workbook = writer.book
+                sheets = workbook.sheetnames
+                
+                for sheet_name in sheets:
+                    sheet = workbook[sheet_name]
+                    for column_cells in sheet.columns:
+                        max_length = 0
+                        for cell in column_cells:
+                            try:
+                                if len(str(cell.value)) > max_length:
+                                    max_length = len(cell.value)
+                            except:
+                                pass
+                        adjusted_width = (max_length + 2) * 1.2
+                        sheet.column_dimensions[cell.column_letter].width = adjusted_width
+
+                # Сохранение документа Excel
+                workbook.save('Report.xlsx')
+            
+        return render_template('admin/create_report/create_report.html', coefficient=coefficient, head_department_enumerated=head_department_enumerated)
     
-    def head_colleague_page_rated(self, colleague_id, head_id):
+    def admin_rate_access(self):
+        if request.method == 'POST' and 'del_rate' in request.form:
+            user_id_del = request.form.get('user_id_del')
+            head_id_del = request.form.get('head_id_del')
+            user_num_del = str((self.db.get_id_userinfo(user_id_del))['employee_record_card'])
+            print(user_num_del)
+            flag_first = self.db.del_last_rate(user_num_del,'first')
+            flag_second = self.db.del_last_rate(user_num_del,'second')
+            if(flag_first and flag_second):
+                self.db.update_rating_status(user_id_del, head_id_del, 0)
+            print(flag_first, flag_second)
+        if request.method == 'POST' and 'del_all' in request.form:
+            self.db.del_all_performances()
+        if request.method == 'POST' and 'reset_all' in request.form:
+            self.db.reset_all_statuses()
+        rate_list = []
+        all_rate_statuses = self.db.get_all_rate_statuses()
+        print(all_rate_statuses)
+        for i in range(len(all_rate_statuses)):
+            headname = self.db.get_id_userinfo(all_rate_statuses[i][0])['full_name']
+            username = self.db.get_id_userinfo(all_rate_statuses[i][1])['full_name']
+            rate_list.append(
+                {'head_id': all_rate_statuses[i][0],
+                 'user_id': all_rate_statuses[i][1],
+                 'headname': headname,
+                 'username' : username
+                 })
+        return render_template('admin/rate_access/rate_access.html', rate_list = rate_list)
+    
+    def page_access_colleague_page(self, colleague_id, head_id):
         employee_info = self.db.get_id_userinfo(colleague_id)
         userinfo = self.db.get_id_userinfo(colleague_id)
         print_info_first = enumerate(
@@ -335,10 +506,13 @@ class FlaskApp():
             self.db.get_marks_rated_colleagues(
                 employee_info['employee_record_card'], 'second'))
 
-        return render_template('admin/rate_statistic/head_colleague_page_rated.html',
+        return render_template('admin/rate_access/page_access_colleague_page.html',
                                print_info_first=print_info_first,
                                print_info_second=print_info_second,
                                userinfo=userinfo,
                                colleague_id=colleague_id,
                                head_id=head_id
                                )
+    
+    def admin_menu_change_password(self):
+        pass

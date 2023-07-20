@@ -81,3 +81,85 @@
     height: 100%;
     margin-left: 20px;
 }
+.date-input {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  
+  .date-input label {
+    margin-right: 10px;
+    font-size: 20px;
+    margin-left: 30px;
+    text-align: right;
+    font-weight: bold;
+  }
+  
+  .date-input input[type="date"] {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .department-list label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 20px;
+    margin-left: 30px;
+  }
+
+
+
+.CollegList .view-rating-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #4CAF50; 
+    font-size: 20px;
+    color: #fff; 
+    text-decoration: none; 
+    border-radius: 4px; 
+    transition: background-color 0.3s; 
+  }
+  
+  .CollegList .view-rating-btn:hover {
+    font-size: 20px;
+    background-color: #45a049;
+  }
+  
+  .CollegList .delete-rate {
+    /* Styles for "Удалить оценку" button */
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 20px;
+    width: 75%;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .CollegList .delete-rate:hover {
+    /* Hover styles for "Удалить оценку" button */
+    background-color: #ff2200;
+  }
+
+  .CollegList .delete-all {
+    /* Styles for "Удалить оценку" button */
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 10px 0 0 0;
+    font-size: 20px;
+    width: 25%;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .CollegList .delete-all:hover {
+    background-color: #010101;
+  }

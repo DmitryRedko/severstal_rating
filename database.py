@@ -141,7 +141,7 @@ class DataBase:
             with self.conn.cursor() as cursor:
                 cursor.execute(
                     """
-                    SELECT employee_full_name, department_position, department, employee_record_card, head_record_card, id
+                    SELECT employee_full_name, department_position, department,  employee_record_card, head_record_card, id, head_department
                     FROM staff
                     WHERE employee_record_card = %s
                     """,
@@ -157,7 +157,8 @@ class DataBase:
                         'department_position': result[0][1],
                         'employee_record_card': result[0][3],
                         'head_record_card': result[0][4],
-                        'user_id': result[0][5]
+                        'user_id': result[0][5],
+                        'head_department': result[0][6]
                     }
         except BaseException:
             result = "Ошибка обращения к базе данных"
@@ -207,7 +208,6 @@ class DataBase:
         return result
 
     def update_rating_status(self, colleague_id, head_id, status):
-        print("HERE")
         result = ''
         try:
             with self.conn.cursor() as cursor:
@@ -223,21 +223,6 @@ class DataBase:
         except BaseException:
             result = "Ошибка обращения к базе данных"
         return result
-
-    def get_rating_status(self, colleague_id, head_id):
-        result = ''
-        with self.conn.cursor() as cursor:
-            cursor.execute(
-                f"""
-                SELECT rate_status
-                FROM rate_status
-                WHERE head_id = %s
-                AND employee_id = %s;
-                """,
-                (head_id, colleague_id,)
-            )
-            result = cursor.fetchall()
-        return result != []
 
     def set_new_password(self, head_id, new_password):
         result = ''
@@ -280,3 +265,161 @@ class DataBase:
         except BaseException:
             result = False
         return result
+
+    def get_head_departments_list(self):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT DISTINCT head_department FROM staff;
+                    """
+                )
+                result = cursor.fetchall()
+                result_list = []
+                for row in result:
+                    result_list.append(row[0])
+                result = result_list
+        except BaseException:
+            result = False
+        return result
+    
+    def get_max_scores(self):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT t1.head_department, t1.department, t1.department_position,
+                        t1.total_max_score * COALESCE(t2.total_max_score, 1) AS final_total_max_score
+                    FROM (
+                        SELECT head_department, department, department_position,
+                            EXP(SUM(LN(max_score))) AS total_max_score
+                        FROM first_block
+                        GROUP BY head_department, department, department_position
+                    ) AS t1
+                    LEFT JOIN (
+                        SELECT head_department, department, department_position,
+                            SUM(max_score) AS total_max_score
+                        FROM second_block
+                        GROUP BY head_department, department, department_position
+                    ) AS t2
+                    ON t1.head_department = t2.head_department
+                    AND t1.department = t2.department
+                    AND t1.department_position = t2.department_position;
+                    """
+                )
+                result = cursor.fetchall()
+        except BaseException:
+            result = False
+        return result
+
+    def get_staff_marks(self):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT t1.employee_record_card, 
+                        t1.performance_date, 
+                        t1.total_performance * COALESCE(t2.total_performance, 1) AS final_total_performance
+                    FROM (
+                        SELECT employee_record_card, 
+                            performance_date, 
+                            EXP(SUM(LN(performance))) AS total_performance
+                        FROM estimation_first
+                        GROUP BY employee_record_card, performance_date
+                    ) AS t1
+                    LEFT JOIN (
+                        SELECT employee_record_card, 
+                            performance_date, 
+                            SUM(performance) AS total_performance
+                        FROM estimation_second
+                        GROUP BY employee_record_card, performance_date
+                    ) AS t2 ON t1.employee_record_card = t2.employee_record_card
+                        AND t1.performance_date = t2.performance_date;
+                    """
+                )
+                result = cursor.fetchall()
+        except BaseException:
+            result = False
+        return result
+    
+    def get_all_rate_statuses(self):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT head_id, employee_id, rate_status
+                    FROM rate_status
+                    WHERE rate_status = 'true';
+                    """
+                )
+                result = cursor.fetchall()
+        except BaseException:
+            result = False
+        return result
+    
+    def get_current_rate_status(self, colleague_id, head_id):
+        result = ''
+        with self.conn.cursor() as cursor:
+            cursor.execute(
+                f"""
+                SELECT rate_status
+                FROM rate_status
+                WHERE head_id = %s
+                AND employee_id = %s;
+                """,
+                (head_id, colleague_id,)
+            )
+            result = cursor.fetchall()
+        return result
+    
+    def get_current_rate_status(self, colleague_id, head_id):
+        result = ''
+        with self.conn.cursor() as cursor:
+            cursor.execute(
+                f"""
+                SELECT rate_status
+                FROM rate_status
+                WHERE head_id = %s
+                AND employee_id = %s;
+                """,
+                (head_id, colleague_id,)
+            )
+            result = cursor.fetchall()
+        return result
+    
+    def del_last_rate(self, colleague_record_card, name):
+        result_status = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    DELETE FROM public.estimation_{name}
+                    WHERE (employee_record_card, performance_date) IN (
+                        SELECT employee_record_card, MAX(performance_date)
+                        FROM public.estimation_{name}
+                        WHERE employee_record_card = %s
+                        GROUP BY employee_record_card
+                    );
+                    """,
+                    (colleague_record_card,)
+                )
+                result_status = True
+        except BaseException:
+            result_status = False
+        return result_status
+
+    def del_all_performances(self):
+        with self.conn.cursor() as cursor:
+                cursor.execute("DELETE FROM estimation_first;")
+        with self.conn.cursor() as cursor:
+                cursor.execute("DELETE FROM estimation_second;")
+        with self.conn.cursor() as cursor:
+                cursor.execute("DELETE FROM rate_status;")
+
+    def reset_all_statuses(self):
+        with self.conn.cursor() as cursor:
+                cursor.execute("DELETE FROM rate_status;")
