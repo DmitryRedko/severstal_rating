@@ -423,3 +423,25 @@ class DataBase:
     def reset_all_statuses(self):
         with self.conn.cursor() as cursor:
                 cursor.execute("DELETE FROM rate_status;")
+    
+    def set_new_password_admin(self, head_id, new_password):
+        result = ''
+        with self.conn.cursor() as cursor:
+            cursor.execute(
+                f"""
+                UPDATE authentication
+                SET head_password = %s
+                WHERE head_record_card = %s;
+                """,
+                (new_password, head_id,)
+            )
+            
+        with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    UPDATE authentication
+                    SET can_be_changed = true
+                    WHERE head_record_card = %s;
+                    """,
+                    (head_id,)
+                )

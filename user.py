@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-
+from werkzeug.security import check_password_hash
 
 class UserManager:
     def __init__(self, db):
@@ -13,7 +13,7 @@ class UserManager:
 
     def verify_user(self, username, password):
         self.__update_info()
-        return username in self.users and self.users[username] == password
+        return username in self.users and check_password_hash(self.users[username],password)
 
     def is_username_taken(self, username):
         return username in self.users

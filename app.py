@@ -6,11 +6,9 @@ from database import DataBase
 import pandas as pd
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime as dt
-import matplotlib.pyplot as plt
 import datetime
-import numpy as np
-import io
-import base64
+import random
+import string
 
 class FlaskApp():
     def __init__(self):
@@ -43,6 +41,7 @@ class FlaskApp():
         self.app.route('/create_report',methods=['GET','POST'])(self.create_report)
         self.app.route('/admin_rate_access',methods=['GET','POST'])(self.admin_rate_access)
         self.app.route('/page_access_colleague_page/<string:colleague_id>/<string:head_id>',methods=['GET','POST'])(self.page_access_colleague_page)
+        self.app.route('/admin_menu_change_password',methods=['GET','POST'])(self.admin_menu_change_password)
         self.app.route('/logout')(self.logout)
         
     def run(self):
@@ -242,8 +241,9 @@ class FlaskApp():
             can_change_flag = self.db.get_auterisation_info_by_record_card(
                 userinfo['employee_record_card'])[0][2]
             if (password_new_again == password_new and can_change_flag):
+                password_hashed = generate_password_hash(password_new)
                 self.db.set_new_password(
-                    userinfo['employee_record_card'], password_new)
+                    userinfo['employee_record_card'], password_hashed)
                 flash('Пароль успешно изменен.', category='success')
             elif (password_new_again != password_new):
                 flash('Пароли не совпадают.', category='error')
@@ -513,6 +513,32 @@ class FlaskApp():
                                colleague_id=colleague_id,
                                head_id=head_id
                                )
-    
+
+    def __generate_random_password(self,length=2):
+        special_characters = '!@#$%^&*()_+=<>?'
+        characters = string.ascii_letters + string.digits + special_characters
+        password = ''.join(random.choice(characters) for i in range(length))
+        return password
+
     def admin_menu_change_password(self):
-        pass
+        password = ''
+        head_id_current = ''
+        if request.method == 'POST' and 'password_change' in request.form:
+            head_id_current = request.form.get('head_id')
+            password = self.__generate_random_password()
+            hashed_password = generate_password_hash(password)
+            print(password)
+            print(hashed_password)
+            self.db.set_new_password_admin(head_id_current, hashed_password)
+            
+        auterisation_info = self.db.get_auterisation_info() 
+        print_info = []
+        for row in auterisation_info:
+            userinfo = self.db.get_id_userinfo(row[0])
+            print_info.append([row[0], userinfo['full_name']])
+            
+        return render_template('admin/change_password/change_password.html',
+                               head_id_current = head_id_current,
+                               print_info = print_info,
+                               password = password
+                               )
