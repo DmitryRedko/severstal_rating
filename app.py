@@ -13,6 +13,9 @@ import string
 class FlaskApp():
     def __init__(self):
         self.created_df = None
+        self.__admin_criteria_flag = None
+        self.__first_filtred_criterias = []
+        self.__second_filtred_criterias = []
         self.db = DataBase(db_settings)
         self.app = Flask(__name__)
         self.login_manager = LoginManager(self.app)
@@ -42,6 +45,8 @@ class FlaskApp():
         self.app.route('/admin_rate_access',methods=['GET','POST'])(self.admin_rate_access)
         self.app.route('/page_access_colleague_page/<string:colleague_id>/<string:head_id>',methods=['GET','POST'])(self.page_access_colleague_page)
         self.app.route('/admin_menu_change_password',methods=['GET','POST'])(self.admin_menu_change_password)
+        self.app.route('/admin_criteria', methods=['GET','POST'])(self.admin_criteria)
+        self.app.route('/change_criteria/<string:criteria_id>/<int:bool_block_status>', methods=['GET','POST'])(self.change_criteria)        
         self.app.route('/logout')(self.logout)
         
     def run(self):
@@ -415,7 +420,7 @@ class FlaskApp():
             start_date=''
             end_date=''
             if(start_date_str is None or end_date_str is None or start_date_str == '' or end_date_str == ''):
-                flash('Промежуток времени не задан.', category='error')
+                flash('Списокуток времени не задан.', category='error')
                 flag = 1
             else:
                 start_date = dt.strptime(start_date_str, "%Y-%m-%d").date()
@@ -542,3 +547,74 @@ class FlaskApp():
                                print_info = print_info,
                                password = password
                                )
+
+    def admin_criteria(self):
+        print(request.form)
+        
+        if self.__admin_criteria_flag is None:
+            self.__admin_criteria_flag = 0
+            
+            
+        if request.method == 'POST' and "filter" in request.form:
+            self.head_department_admin = request.form.get('head_department')
+            self.department_admin = request.form.get('department')
+            self.department_position_admin = request.form.get('department_position')
+            if(self.head_department_admin!='' and self.department_admin!='' and self.department_position_admin!='' and self.head_department_admin!=None and self.department_position_admin!=None and self.department_position_admin!=None):
+                self.__first_filtred_criterias = self.db.get_named_criterias(self.head_department_admin, self.department_admin, self.department_position_admin,'first')
+                self.__second_filtred_criterias = self.db.get_named_criterias(self.head_department_admin, self.department_admin, self.department_position_admin,'second')
+                if(len(self.__second_filtred_criterias)>0 or len(self.__first_filtred_criterias)>0):
+                    self.__admin_criteria_flag = 1
+                else:
+                    flash("Ничего не найдено", category='error')        
+            else:
+                flash("Нужно заполнить все поля", category='error')   
+                 
+        if request.method == 'POST' and 'filter_menu' in request.form:
+            self.__admin_criteria_flag = 0
+
+        if request.method == 'POST' and 'delete' in request.form:
+            first_criteria_id = request.form.get('first_criteria_id')
+            second_criteria_id = request.form.get('second_criteria_id')
+            if (first_criteria_id is not None):
+                self.db.delete_criteria_by_id(first_criteria_id, 'first')
+            elif (second_criteria_id is not None):
+                self.db.delete_criteria_by_id(second_criteria_id, 'second')
+            self.__first_filtred_criterias = self.db.get_named_criterias(self.head_department_admin, self.department_admin, self.department_position_admin,'first')
+            self.__second_filtred_criterias = self.db.get_named_criterias(self.head_department_admin, self.department_admin, self.department_position_admin,'second')
+               
+        if request.method == 'POST' and 'update' in request.form:
+            first_criteria_id = request.form.get('first_criteria_id')
+            second_criteria_id = request.form.get('second_criteria_id')
+            if (first_criteria_id is not None):
+                return redirect(url_for('change_criteria', criteria_id = first_criteria_id, bool_block_status = False))
+            elif (second_criteria_id is not None):
+                return redirect(url_for('change_criteria', criteria_id = second_criteria_id, bool_block_status = True))
+        
+        
+            
+        return render_template('admin/admin_criteria/admin_criteria.html',
+                               status_print = self.__admin_criteria_flag,
+                               first_criterias = self.__first_filtred_criterias,
+                               second_criterias = self.__second_filtred_criterias)
+    
+    def change_criteria(self, criteria_id,bool_block_status):
+        name = 'second' if bool_block_status else 'first'
+        if request.method == 'POST':
+            criteria = request.form.get('criteria')
+            description = request.form.get('description')
+            min_score = request.form.get('min_score')
+            max_score = request.form.get('max_score')
+            print(criteria,description,min_score,max_score)
+            print(self.db.update_criteria_by_id(criteria, description, min_score, max_score, criteria_id, name))
+        info = self.db.get_criteria_by_id(criteria_id,name)[0]
+        infodict = {
+            'criteria_id':info[0],
+            'head_department':info[1],
+            'department':info[2],
+            'department_position':info[3],
+            'criteria':info[4],
+            'description':info[5],
+            'min':info[6],
+            'max':info[7],
+        }
+        return render_template('admin/admin_criteria/change_criteria.html', bool_block_status = bool_block_status, info = infodict)

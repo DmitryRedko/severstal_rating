@@ -30,12 +30,6 @@
     padding: 5px;
 }
 
-.form-container input[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-}
-
 .content-container {
     display: flex;
     height: 100%;
@@ -130,36 +124,3 @@
     background-color: #45a049;
   }
   
-  .CollegList .delete-rate {
-    /* Styles for "Удалить оценку" button */
-    display: inline-block;
-    padding: 8px 16px;
-    font-size: 20px;
-    width: 75%;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-  }
-  
-  .CollegList .delete-rate:hover {
-    /* Hover styles for "Удалить оценку" button */
-    background-color: #ff2200;
-  }
-
-  .CollegList .delete-all {
-    /* Styles for "Удалить оценку" button */
-    display: inline-block;
-    padding: 8px 16px;
-    margin: 10px 0 0 0;
-    font-size: 20px;
-    width: 25%;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-  }
-  
-  .CollegList .delete-all:hover {
-    background-color: #010101;
-  }

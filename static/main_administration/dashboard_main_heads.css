@@ -34,12 +34,6 @@
     padding: 5px;
 }
 
-.form-container input[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-}
-
 table {
     border-collapse: collapse;
     font-size: 25px;

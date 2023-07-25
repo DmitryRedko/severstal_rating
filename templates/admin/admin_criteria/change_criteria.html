@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>administration Page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard/colleague_page.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_administration/additional.css') }}">
+</head>
+
+<body>
+    <form method="post" action="{{ url_for('change_criteria', bool_block_status = bool_block_status, criteria_id = info.criteria_id) }}">
+    <header class="page-header">
+        <div class="brand">
+            <a href="{{ url_for('home') }}"><img src="../../../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png"
+                    alt="brand"></a>
+        </div>
+        <div class="buttons">
+            <a href="{{ url_for('login') }}" class="headerbottom">Login</a>
+            <a href="{{ url_for('admin') }}" class="headerbottom">Admin</a>
+        </div>
+    </header>
+    <main class="form-container">
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Старая информация</th>
+                    <th>Новая информация</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Критерий</td>
+                    <td>{{ info.criteria }}</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' value = "{{ info.criteria }}" type="text" name="criteria">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Описание</td>
+                    <td>{{ info.description }}</td>
+                    <td>
+                        <textarea class='input-update' 
+                        style="width: 508px; height: 220px;" 
+                        name="description" maxlength="1000">{{ info.description }}</textarea>
+              
+                    </td>
+                </tr>
+                <tr>
+                    <td>Минимум</td>
+                    <td>{{ info.min }}</td>
+                    <td>
+                        {% if bool_block_status == 0 %}
+                        <input type="number" class='input-update' value = "{{ info.min }}" style="width: 500px;" step="0.001" name="min_score">
+                        {% else %}
+                        <input type="number" class='input-update' value = "{{ info.min }}" style="width: 500px;" step="1" name="min_score">
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Максимум</td>
+                    <td>{{ info.max }} {{block}}</td>
+                    <td>
+                        {% if bool_block_status == 0 %}
+                        <input type="number" class='input-update' value = "{{ info.max }}" style="width: 500px;" step="0.001" name="max_score">
+                        {% else %}
+                        <input type="number" class='input-update' value = "{{ info.max }}" style="width: 500px;" step="1" name="max_score">
+                        {% endif %}
+                    </td> 
+                </tr>
+            </tbody>
+        </table>
+        <input type="submit" name='update' class="button" style="width: 200px;" value="Изменить">
+        </form>
+
+    </main>
+</body>
+
+</html>

@@ -35,8 +35,8 @@ class DataBase:
                 cursor.execute(
                     """
                     SELECT s.employee_record_card, s.employee_full_name, s.department_position, s.department,  s.head_record_card, s.id
-                    FROM public.staff s
-                    FULL JOIN public.rate_status rs ON s.id = rs.employee_id
+                    FROM staff s
+                    FULL JOIN rate_status rs ON s.id = rs.employee_id
                     WHERE rs.rate_status = true
                     AND s.head_record_card = %s;
                     """,
@@ -49,21 +49,21 @@ class DataBase:
 
     def get_colleagues_to_rate(self, head_record_card):
         result = ''
-        # try:
-        with self.conn.cursor() as cursor:
-            cursor.execute(
-                """
-                SELECT s.employee_record_card, s.employee_full_name, s.department_position, s.department,  s.head_record_card, s.id
-                FROM public.staff s
-                FULL JOIN public.rate_status rs ON s.id = rs.employee_id
-                WHERE (rs.rate_status = false OR rs.rate_status IS NULL)
-                AND s.head_record_card = %s;
-                """,
-                (head_record_card,)
-            )
-            result = cursor.fetchall()
-        # except:
-        #     result = False
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT s.employee_record_card, s.employee_full_name, s.department_position, s.department,  s.head_record_card, s.id
+                    FROM staff s
+                    FULL JOIN rate_status rs ON s.id = rs.employee_id
+                    WHERE (rs.rate_status = false OR rs.rate_status IS NULL)
+                    AND s.head_record_card = %s;
+                    """,
+                    (head_record_card,)
+                )
+                result = cursor.fetchall()
+        except:
+            result = False
         return result
 
     def get_marks_rated_colleagues(self, employee_record_card, name):
@@ -72,7 +72,7 @@ class DataBase:
             with self.conn.cursor() as cursor:
                 cursor.execute(
                     f"""
-                    SELECT employee_record_card, criterion, description, performance_date, min_score, max_score, performance, comment
+                    SELECT employee_record_card, criteria, description, performance_date, min_score, max_score, performance, comment
                     FROM estimation_{name}
                     WHERE employee_record_card = %s
                     AND performance_date = (
@@ -172,7 +172,7 @@ class DataBase:
                 for i in range(len(dictmark)):
                     cursor.execute(
                         f"""
-                        INSERT INTO estimation_{name} (employee_record_card, criterion, description, performance_date, min_score, max_score, performance, comment)
+                        INSERT INTO estimation_{name} (employee_record_card, criteria, description, performance_date, min_score, max_score, performance, comment)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                         """,
                         (dictmark[i][0],
@@ -195,7 +195,7 @@ class DataBase:
             with self.conn.cursor() as cursor:
                 cursor.execute(
                     f"""
-                    SELECT c.criterion, c.description, c.min_score, c.max_score
+                    SELECT c.criteria, c.description, c.min_score, c.max_score
                     FROM staff s
                     JOIN {name}_block c ON s.department = c.department
                                 AND s.department_position = c.department_position
@@ -397,10 +397,10 @@ class DataBase:
             with self.conn.cursor() as cursor:
                 cursor.execute(
                     f"""
-                    DELETE FROM public.estimation_{name}
+                    DELETE FROM estimation_{name}
                     WHERE (employee_record_card, performance_date) IN (
                         SELECT employee_record_card, MAX(performance_date)
-                        FROM public.estimation_{name}
+                        FROM estimation_{name}
                         WHERE employee_record_card = %s
                         GROUP BY employee_record_card
                     );
@@ -445,3 +445,73 @@ class DataBase:
                     """,
                     (head_id,)
                 )
+                
+    def get_named_criterias(self,head_department, department, department_position,name):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    SELECT id, head_department, department, department_position, criteria, description, min_score, max_score
+                    FROM {name}_block
+                    WHERE head_department = %s AND department = %s AND department_position = %s;
+                    """,
+                    (head_department, department, department_position, )
+                )
+                result = cursor.fetchall()
+        except BaseException:
+            result = False
+        return result
+    
+    def get_criteria_by_id(self,criteria_id,name):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    SELECT id, head_department, department, department_position, criteria, description, min_score, max_score
+                    FROM {name}_block
+                    WHERE id = %s;
+                    """,
+                    (criteria_id,)
+                )
+                result = cursor.fetchall()
+        except BaseException:
+            result = False
+        return result   
+    
+    def update_criteria_by_id(self,criteria, description, min_score, max_score, criteria_id,name):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    UPDATE {name}_block
+                    SET criteria = %s,
+                    description = %s,
+                    min_score = %s,
+                    max_score = %s
+                    WHERE id = %s;
+                    """,
+                    (criteria, description, min_score, max_score, criteria_id,)
+                )
+            result = cursor.fetchall()
+        except BaseException:
+            result = False
+        return result
+    
+    def delete_criteria_by_id(self,criteria_id,name):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    DELETE FROM {name}_block
+                    WHERE id = %s
+                    """,
+                    (criteria_id,)
+                )
+                result = cursor.fetchall()
+        except BaseException:
+            result = False
+        return result
