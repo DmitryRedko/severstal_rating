@@ -111,7 +111,7 @@ class DataBase:
             with self.conn.cursor() as cursor:
                 cursor.execute(
                     """
-                    SELECT employee_full_name, department_position, department, employee_record_card, head_record_card, id
+                    SELECT employee_full_name, department_position, department,  employee_record_card, head_record_card, id, head_department
                     FROM staff
                     WHERE id = %s
                     """,
@@ -127,7 +127,8 @@ class DataBase:
                         'department_position': result[0][1],
                         'employee_record_card': result[0][3],
                         'head_record_card': result[0][4],
-                        'user_id': result[0][5]
+                        'user_id': result[0][5],
+                        'head_department': result[0][6]
                     }
         except BaseException:
             result = "Ошибка обращения к базе данных"
@@ -512,6 +513,98 @@ class DataBase:
                     (criteria_id,)
                 )
                 result = cursor.fetchall()
+        except BaseException:
+            result = False
+        return result
+    
+    def add_criteria(self,block, head_department, department, department_position, criteria, description, min_score, max_score):
+        result = True
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    INSERT INTO {block}_block (head_department, department, department_position, criteria, description, min_score, max_score)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """,
+                    (head_department, department, department_position, criteria, description, min_score, max_score,)
+                )
+        except BaseException:
+            result = False
+        return result
+    
+    def __get_where(self, dict_info):
+        wh = ''
+        for key, value in dict_info.items():
+            if value is not None and value!='' and key != 'user_id':
+                wh+=str(key) +'='+"'"+str(value)+"'"+' AND '
+        wh = wh[:-5]
+        return wh
+    
+    def get_users_base(self,info_dict):
+        cond = self.__get_where(info_dict)
+        result = ''
+        if(bool(cond)):
+            with self.conn.cursor() as cursor:
+                cursor.execute(f"""SELECT head_department, department, department_position, employee_full_name,employee_record_card,head_record_card
+                                FROM staff
+                                WHERE {cond}""")
+                result = cursor.fetchall()
+        else:
+            with self.conn.cursor() as cursor:
+                cursor.execute(f"""SELECT head_department, department, department_position, employee_full_name,employee_record_card,head_record_card
+                                FROM staff""")
+                result = cursor.fetchall()
+            
+        return result
+    
+    def update_user_by_id(self,user_id, head_department, department, department_position, full_name, employee_record_card, head_record_card):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    UPDATE staff
+                    SET head_department = %s,
+                    department = %s,
+                    department_position = %s,
+                    employee_full_name = %s,
+                    employee_record_card = %s,
+                    head_record_card = %s
+                    WHERE id = %s;
+                    """,
+                    (head_department, department, department_position, full_name, employee_record_card, head_record_card, user_id,)
+                )
+        except BaseException:
+            result = False
+        return result
+    
+    def delete_user_by_record_card(self, number):
+        result = ''
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    DELETE FROM staff
+                    WHERE employee_record_card = %s
+                    """,
+                    (number,)
+                )
+                result = cursor.fetchall()
+        except BaseException:
+            result = False
+        return result
+    
+    def add_user(self,head_department, department, department_position, full_name, employee_record_card, head_record_card):
+        result = True
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    f"""
+                    INSERT INTO staff (head_department, department, department_position, employee_full_name, employee_record_card, head_record_card)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    """,
+                    (head_department, department, department_position, full_name, employee_record_card, head_record_card,)
+                )
         except BaseException:
             result = False
         return result

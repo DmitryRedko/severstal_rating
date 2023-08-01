@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>administration Page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard/colleague_page.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_administration/additional.css') }}">
+</head>
+
+<body>
+    <form method="post" action="{{ url_for('add_user') }}">
+    <header class="page-header">
+        <div class="brand">
+            <a href="{{ url_for('home') }}"><img src="../../../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png"
+                    alt="brand"></a>
+        </div>
+        <div class="buttons">
+            <a href="{{ url_for('user_base') }}" class="headerbottom">Назад</a>
+            <a href="{{ url_for('dashboard_admin') }}" class="headerbottom">Меню</a>
+            <a href="{{ url_for('logout') }}" class="headerbottom">Деавторизация</a>
+        </div>
+    </header>
+    <main class="form-container">
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Информация для добавления</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Направление</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' type="text" name="head_department">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Отдел</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' type="text" name="department">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Должность</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' type="text" name="department_position">
+                    </td>
+                </tr>
+                <tr>
+                    <td>ФИО</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' type="text" name="full_name">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Табельный номер сотрудника</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' type="text" name="employee_record_card">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Табельный номер руководителя</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' type="text" name="head_record_card">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="submit" name='add' class="button" style="width: 200px;" value="Добавить">
+        </form>
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div class='status-message_{{cat}}'>{{msg}}</div>
+        {% endfor %}
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>administration Page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='main_administration/additional.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard/colleague_page.css') }}">
+</head>
+
+<body>
+    <header class="page-header">
+        <div class="brand">
+            <a href="{{ url_for('home') }}"><img src="../../../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png"
+                    alt="brand"></a>
+        </div>
+        <div class="buttons">
+            <a href="{{ url_for('dashboard_admin') }}" class="headerbottom">Меню</a>
+            <a href="{{ url_for('logout') }}" class="headerbottom">Деавторизация</a>
+        </div>
+    </header>
+
+    <main class="form-container">
+        <form method="post" action="{{ url_for('user_base') }}">
+            <input type="submit" name='add' class="button" value="Добавить сотрудника">
+        </form>
+        {% if filter_flag == 1%}
+        <h1>Фильтр</h1>
+        <form method="post" action="{{ url_for('user_base') }}">
+            <input type="text"  style="width: 300px;" name="head_department" placeholder="Направление"><br>
+            <input type="text"  style="width: 300px;" name="department" placeholder="Отдел"><br>
+            <input type="text"  style="width: 300px;" name="department_position" placeholder="Должность"><br>
+            <input type="text"  style="width: 300px;" name="full_name" placeholder="ФИО"><br>
+            <input type="text"  style="width: 300px;" name="employee_record_card" placeholder="Табельный номер сотрудника"><br>
+            <input type="text"  style="width: 300px;" name="head_record_card" placeholder="Табельный номер руководителя"><br>
+            <input type="submit" class="button" style="width: 300px;" name='filter' value="Отфильтровать">
+        </form>
+        {%endif%}
+
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div class='status-message_{{cat}}'>{{msg}}</div>
+        {% endfor %}
+
+        {% if filter_flag == 0%}
+            <form method="post" action="{{ url_for('user_base') }}">
+                <input type="submit" name='filter_menu' class="button" value="Фильтр">
+            </form>
+        {%endif%}
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Направление</th>
+                    <th>Отдел</th>
+                    <th>Должность</th>
+                    <th>ФИО сотрудника</th>
+                    <th>Табельный номер сотрудника</th>
+                    <th>Табельный номер руководителя</th>
+                    <th>Изменить ПД</th>
+                    <th>Удалить сотрудника</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.0 }}</td>
+                    <td>{{ user.1 }}</td>
+                    <td>{{ user.2}}</td>
+                    <td>{{ user.3}}</td>
+                    <td>{{ user.4}}</td>
+                    <td>{{ user.5}}</td>
+                    <form method="post" action="{{ url_for('user_base') }}">
+                        <td><input type="submit" name='update' class="change-criteria" value="Изменить"></td>
+                        <td><input type="submit" name='delete' class="delete-rate" value="Удалить"></td>
+                        <input type="hidden" name="user_record_card" value="{{ user.4 }}">
+                    </form>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>administration Page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard/colleague_page.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_administration/additional.css') }}">
+</head>
+
+<body>
+    <form method="post" action="{{ url_for('change_user', user_id = info.user_id) }}">
+    <header class="page-header">
+        <div class="brand">
+            <a href="{{ url_for('home') }}"><img src="../../../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png"
+                    alt="brand"></a>
+        </div>
+        <div class="buttons">
+            <a href="{{ url_for('user_base') }}" class="headerbottom">Назад</a>
+            <a href="{{ url_for('dashboard_admin') }}" class="headerbottom">Меню</a>
+            <a href="{{ url_for('logout') }}" class="headerbottom">Деавторизация</a>
+        </div>
+    </header>
+    <main class="form-container">
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Старая информация</th>
+                    <th>Новая информация</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Направление</td>
+                    <td>{{ info.head_department }}</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' value = "{{ info.head_department }}" type="text" name="head_department">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Отдел</td>
+                    <td>{{ info.department }}</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' value = "{{ info.department }}" type="text" name="department">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Должность</td>
+                    <td>{{ info.department_position }}</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' value = "{{ info.department_position }}" type="text" name="department_position">
+                    </td>
+                </tr>
+                <tr>
+                    <td>ФИО сотрудника</td>
+                    <td>{{ info.full_name }}</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' value = "{{ info.full_name }}" type="text" name="full_name">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Табельный номер сотрудника</td>
+                    <td>{{ info.employee_record_card }}</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' value = "{{ info.employee_record_card }}" type="text" name="employee_record_card">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Табельный номер руководителя</td>
+                    <td>{{ info.head_record_card }}</td>
+                    <td>
+                        <input style="width: 500px;" class='input-update' value = "{{ info.head_record_card }}" type="text" name="head_record_card">
+                    </td>
+                </tr>
+                
+            </tbody>
+        </table>
+        <input type="submit" name='update' class="button" style="width: 200px;" value="Изменить">
+        </form>
+
+    </main>
+</body>
+
+</html>

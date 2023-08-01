@@ -1,4 +1,5 @@
 from flask_login import UserMixin
+from flask_login import login_user, logout_user
 from werkzeug.security import check_password_hash
 
 class UserManager:
@@ -28,12 +29,16 @@ class AdminManager:
 
     def verify_admin(self, adminname, password):
         return adminname in self.admin and self.admin[adminname] == password
+    
+    def login_admin(self, adminname, password):
+        if self.verify_admin(adminname, password):
+            user = UserLogin().create(adminname)  
+            login_user(user)  
+            return True
+        return False
 
-    def is_adminname_taken(self, adminname):
-        return adminname in self.admin
-
-    def add_admin(self, adminname, password):
-        self.users[adminname] = password
+    def logout_admin(self):
+        logout_user()
 
 
 class UserLogin(UserMixin):

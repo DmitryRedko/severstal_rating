@@ -5,7 +5,8 @@
     <title>administration Page</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_administration/additional.css') }}">
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='main_administration/additional.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard/colleague_page.css') }}">
 </head>
 
@@ -17,90 +18,93 @@
         </div>
         <div class="buttons">
             <a href="{{ url_for('dashboard_admin') }}" class="headerbottom">Меню</a>
-            <a href="{{ url_for('logout') }}" class="headerbottom">Logout</a>
+            <a href="{{ url_for('logout') }}" class="headerbottom">Деавторизация</a>
         </div>
     </header>
 
     <main class="form-container">
-            {% if status_print == 0%}
-            <h1>Фильтр</h1>
-            <form method="post" action="{{ url_for('admin_criteria') }}">
+        <form method="post" action="{{ url_for('admin_criteria') }}">
+            <input type="submit" name='add' class="button" value="Добавить критерий">
+        </form>
+        {% if status_print == 0%}
+        <h1>Фильтр</h1>
+        <form method="post" action="{{ url_for('admin_criteria') }}">
             <input type="text" value="ОП" name="head_department" placeholder="Направление"><br>
             <input type="text" value="Отдел продаж" name="department" placeholder="Отдел"><br>
             <input type="text" value="Менеджер" name="department_position" placeholder="Должность"><br>
             <input type="submit" class="button" style="width: 200px;" name='filter' value="Отфильтровать">
-            </form>
-            {%endif%}
-            {% if status_print == 1%}
-            <form method="post" action="{{ url_for('admin_criteria') }}">
-                <input type="submit" name='filter_menu' class="button" value="Фильтр">
-            </form>
-            <div class="title-text">Первый блок критериев:</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Направление</th>
-                        <th>Отдел</th>
-                        <th>Должность</th>
-                        <th>Критерий</th>
-                        <th>Описание</th>
-                        <th>Шкала</th>
-                        <th>Изменить критерий</th>
-                        <th>Удалить критерий</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in first_criterias %}
-                    <tr>
-                        <td>{{ item.1 }}</td>
-                        <td>{{ item.2 }}</td>
-                        <td>{{ item.3}}</td>
-                        <td>{{ item.4}}</td>
-                        <td>{{ item.5}}</td>
-                        <td>{{item.6}}-{{item.7}}</td>
-                        <form method="post" action="{{ url_for('admin_criteria') }}">
-                            <td><input type="submit" name='update' class="change-criteria" value="Изменить"></td>
-                            <td><input type="submit" name='delete' class="delete-rate" value="Удалить"></td>
-                            <input type="hidden" name="first_criteria_id" value="{{item.0}}">
-                        </form>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="title-text">Второй блок критериев:</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Направление</th>
-                        <th>Отдел</th>
-                        <th>Должность</th>
-                        <th>Критерий</th>
-                        <th>Описание</th>
-                        <th>Шкала</th>
-                        <th>Изменить критерий</th>
-                        <th>Удалить критерий</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in second_criterias %}
-                    <tr>
-                        <td>{{ item.1 }}</td>
-                        <td>{{ item.2 }}</td>
-                        <td>{{ item.3}}</td>
-                        <td>{{ item.4}}</td>
-                        <td>{{ item.5}}</td>
-                        <td>{{item.6}}-{{item.7}}</td>
-                        <form method="post" action="{{ url_for('admin_criteria') }}">
-                            <td><input type="submit" name='update' class="change-criteria" value="Изменить"></td>
-                            <td><input type="submit" name='delete' class="delete-rate" value="Удалить"></td>
-                            <input type="hidden" name="second_criteria_id" value="{{item.0}}">
-                        </form>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% endif %}
-        
+        </form>
+        {%endif%}
+        {% if status_print == 1%}
+        <form method="post" action="{{ url_for('admin_criteria') }}">
+            <input type="submit" name='filter_menu' class="button" value="Фильтр">
+        </form>
+        <div class="title-text">Первый блок критериев:</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Направление</th>
+                    <th>Отдел</th>
+                    <th>Должность</th>
+                    <th>Критерий</th>
+                    <th>Описание</th>
+                    <th>Шкала</th>
+                    <th>Изменить критерий</th>
+                    <th>Удалить критерий</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in first_criterias %}
+                <tr>
+                    <td>{{ item.1 }}</td>
+                    <td>{{ item.2 }}</td>
+                    <td>{{ item.3}}</td>
+                    <td>{{ item.4}}</td>
+                    <td>{{ item.5}}</td>
+                    <td>{{item.6}}-{{item.7}}</td>
+                    <form method="post" action="{{ url_for('admin_criteria') }}">
+                        <td><input type="submit" name='update' class="change-criteria" value="Изменить"></td>
+                        <td><input type="submit" name='delete' class="delete-rate" value="Удалить"></td>
+                        <input type="hidden" name="first_criteria_id" value="{{item.0}}">
+                    </form>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="title-text">Второй блок критериев:</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Направление</th>
+                    <th>Отдел</th>
+                    <th>Должность</th>
+                    <th>Критерий</th>
+                    <th>Описание</th>
+                    <th>Шкала</th>
+                    <th>Изменить критерий</th>
+                    <th>Удалить критерий</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in second_criterias %}
+                <tr>
+                    <td>{{ item.1 }}</td>
+                    <td>{{ item.2 }}</td>
+                    <td>{{ item.3}}</td>
+                    <td>{{ item.4}}</td>
+                    <td>{{ item.5}}</td>
+                    <td>{{item.6}}-{{item.7}}</td>
+                    <form method="post" action="{{ url_for('admin_criteria') }}">
+                        <td><input type="submit" name='update' class="change-criteria" value="Изменить"></td>
+                        <td><input type="submit" name='delete' class="delete-rate" value="Удалить"></td>
+                        <input type="hidden" name="second_criteria_id" value="{{item.0}}">
+                    </form>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
         {% for cat, msg in get_flashed_messages(True) %}
         <div class='status-message_{{cat}}'>{{msg}}</div>
         {% endfor %}
