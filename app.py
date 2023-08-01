@@ -493,6 +493,8 @@ class FlaskApp():
             if(flag_first and flag_second):
                 self.db.update_rating_status(user_id_del, head_id_del, 0)
             print(flag_first, flag_second)
+            
+            
         if request.method == 'POST' and 'del_all' in request.form:
             self.db.del_all_performances()
         if request.method == 'POST' and 'reset_all' in request.form:
