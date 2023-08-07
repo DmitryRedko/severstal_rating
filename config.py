@@ -8,3 +8,5 @@ db_settings = {
     'password': 'admin',
     'host': 'localhost'
 }
+
+admin_confirm_code = "123"

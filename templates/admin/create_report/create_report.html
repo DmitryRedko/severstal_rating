@@ -42,7 +42,7 @@
 
             <h2>Вычисленный нормировачный множитель : {{coefficient}}</h2>
 
-            <input class="button" type="submit" name='report' value="Сформировать отчет">
+            <input class="view-rating-btn" type="submit" name='report' value="Сформировать отчет">
             
             {% for cat, msg in get_flashed_messages(True) %}
             <div class='status-message_{{cat}}'>{{msg}}</div>

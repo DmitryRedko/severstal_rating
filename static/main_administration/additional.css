@@ -140,6 +140,7 @@ th {
   }
   
   .delete-all:hover {
+    cursor: pointer;
     background-color: #010101;
   }
 

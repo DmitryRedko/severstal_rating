@@ -8,6 +8,27 @@
     <link rel="stylesheet" type="text/css"
         href="{{ url_for('static', filename='main_administration/additional.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_dashboard/colleague_page.css') }}">
+    <script>
+        function confirmChangeUser() {
+            const code = prompt('Пожалуйста, введите код администратора:');
+            if (code == "{{admin_confirm_code}}") {
+                return true;
+            } else {
+                alert('Неверный секретный код');
+                return false; // Prevent the form submission
+            }
+        }
+
+        function confirmDeleteUser() {
+            const code = prompt('Пожалуйста, введите код администратора:');
+            if (code == "{{admin_confirm_code}}") {
+                return confirm('Уверены, что хотите удалить сотрудника?');
+            } else {
+                alert('Неверный секретный код');
+                return false;
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -29,12 +50,14 @@
         {% if filter_flag == 1%}
         <h1>Фильтр</h1>
         <form method="post" action="{{ url_for('user_base') }}">
-            <input type="text"  style="width: 300px;" name="head_department" placeholder="Направление"><br>
-            <input type="text"  style="width: 300px;" name="department" placeholder="Отдел"><br>
-            <input type="text"  style="width: 300px;" name="department_position" placeholder="Должность"><br>
-            <input type="text"  style="width: 300px;" name="full_name" placeholder="ФИО"><br>
-            <input type="text"  style="width: 300px;" name="employee_record_card" placeholder="Табельный номер сотрудника"><br>
-            <input type="text"  style="width: 300px;" name="head_record_card" placeholder="Табельный номер руководителя"><br>
+            <input type="text" style="width: 300px;" name="head_department" placeholder="Направление"><br>
+            <input type="text" style="width: 300px;" name="department" placeholder="Отдел"><br>
+            <input type="text" style="width: 300px;" name="department_position" placeholder="Должность"><br>
+            <input type="text" style="width: 300px;" name="full_name" placeholder="ФИО"><br>
+            <input type="text" style="width: 300px;" name="employee_record_card"
+                placeholder="Табельный номер сотрудника"><br>
+            <input type="text" style="width: 300px;" name="head_record_card"
+                placeholder="Табельный номер руководителя"><br>
             <input type="submit" class="button" style="width: 300px;" name='filter' value="Отфильтровать">
         </form>
         {%endif%}
@@ -44,11 +67,11 @@
         {% endfor %}
 
         {% if filter_flag == 0%}
-            <form method="post" action="{{ url_for('user_base') }}">
-                <input type="submit" name='filter_menu' class="button" value="Фильтр">
-            </form>
+        <form method="post" action="{{ url_for('user_base') }}">
+            <input type="submit" name='filter_menu' class="button" value="Фильтр">
+        </form>
         {%endif%}
-        
+
         <table>
             <thead>
                 <tr>
@@ -71,11 +94,18 @@
                     <td>{{ user.3}}</td>
                     <td>{{ user.4}}</td>
                     <td>{{ user.5}}</td>
-                    <form method="post" action="{{ url_for('user_base') }}">
-                        <td><input type="submit" name='update' class="change-criteria" value="Изменить"></td>
-                        <td><input type="submit" name='delete' class="delete-rate" value="Удалить"></td>
-                        <input type="hidden" name="user_record_card" value="{{ user.4 }}">
-                    </form>
+                    <td>
+                        <form method="post" action="{{ url_for('user_base') }}" onsubmit="return confirmChangeUser()">
+                            <input type="submit" name='update' class="change-criteria" value="Изменить">
+                            <input type="hidden" name="user_record_card" value="{{ user.4 }}">
+                        </form>
+                    </td>
+                    <td>
+                        <form method="post" action="{{ url_for('user_base') }}" onsubmit="return confirmDeleteUser()">
+                            <input type="submit" name='delete' class="delete-rate" value="Удалить">
+                            <input type="hidden" name="user_record_card" value="{{ user.4 }}">
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

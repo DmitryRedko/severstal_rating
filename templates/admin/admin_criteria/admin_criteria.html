@@ -62,11 +62,18 @@
                     <td>{{ item.4}}</td>
                     <td>{{ item.5}}</td>
                     <td>{{item.6}}-{{item.7}}</td>
-                    <form method="post" action="{{ url_for('admin_criteria') }}">
-                        <td><input type="submit" name='update' class="change-criteria" value="Изменить"></td>
-                        <td><input type="submit" name='delete' class="delete-rate" value="Удалить"></td>
-                        <input type="hidden" name="first_criteria_id" value="{{item.0}}">
-                    </form>
+                    <td>
+                        <form method="post" action="{{ url_for('admin_criteria') }}" onsubmit="return confirmChangeCriteria()">
+                            <input type="submit" name='update' class="change-criteria" value="Изменить">
+                            <input type="hidden" name="first_criteria_id" value="{{item.0}}">
+                        </form>
+                    </td>
+                    <td>
+                        <form method="post" action="{{ url_for('admin_criteria') }}" onsubmit="return confirmDeleteCriteria()">
+                            <input type="submit" name='delete' class="delete-rate" value="Удалить">
+                            <input type="hidden" name="first_criteria_id" value="{{item.0}}">
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -94,11 +101,18 @@
                     <td>{{ item.4}}</td>
                     <td>{{ item.5}}</td>
                     <td>{{item.6}}-{{item.7}}</td>
-                    <form method="post" action="{{ url_for('admin_criteria') }}">
-                        <td><input type="submit" name='update' class="change-criteria" value="Изменить"></td>
-                        <td><input type="submit" name='delete' class="delete-rate" value="Удалить"></td>
-                        <input type="hidden" name="second_criteria_id" value="{{item.0}}">
-                    </form>
+                    <td>
+                        <form method="post" action="{{ url_for('admin_criteria') }}" onsubmit="return confirmChangeCriteria()">
+                            <input type="submit" name='update' class="change-criteria" value="Изменить">
+                            <input type="hidden" name="second_criteria_id" value="{{item.0}}">
+                        </form>
+                    </td>
+                    <td>
+                        <form method="post" action="{{ url_for('admin_criteria') }}" onsubmit="return confirmDeleteCriteria()">
+                            <input type="submit" name='delete' class="delete-rate" value="Удалить">
+                            <input type="hidden" name="second_criteria_id" value="{{item.0}}">
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -109,8 +123,29 @@
         <div class='status-message_{{cat}}'>{{msg}}</div>
         {% endfor %}
 
-
     </main>
 </body>
 
 </html>
+
+<script>
+    function confirmChangeCriteria() {
+        const code = prompt('Пожалуйста, введите код администратора:');
+        if (code == "{{admin_confirm_code}}") {
+            return true;
+        } else {
+            alert('Неверный секретный код');
+            return false; // Prevent the form submission
+        }
+    }
+
+    function confirmDeleteCriteria() {
+        const code = prompt('Пожалуйста, введите код администратора:');
+        if (code == "{{admin_confirm_code}}") {
+            return confirm('Уверены, что хотите удалить критерий?');
+        } else {
+            alert('Неверный секретный код');
+            return false;
+        }
+    }
+</script>

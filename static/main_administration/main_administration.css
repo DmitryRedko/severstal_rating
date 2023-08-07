@@ -121,6 +121,23 @@
   
   .CollegList .view-rating-btn:hover {
     font-size: 20px;
+    cursor: pointer;
     background-color: #45a049;
   }
   
+  .view-rating-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #4CAF50; 
+    font-size: 20px;
+    color: #fff; 
+    text-decoration: none; 
+    border-radius: 4px; 
+    transition: background-color 0.3s; 
+  }
+
+  .view-rating-btn:hover {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #45a049;
+  }

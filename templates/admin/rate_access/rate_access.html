@@ -8,13 +8,44 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_administration/dashboard_main_heads.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_administration/main_administration.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_administration/additional.css') }}">
+  <script>
+    function confirmDeleteLastRating() {
+      const code = prompt('Пожалуйста, введите код администратора:');
+      if (code == "{{admin_confirm_code}}") {
+        return confirm('Уверены, что хотите удалить последнюю оценку?');
+      } else {
+        alert('Неверный секретный код');
+        return false;
+      }
+    }
+
+    function confirmDeleteAllRatings() {
+      const code = prompt('Пожалуйста, введите код администратора:');
+      if (code == "{{admin_confirm_code}}") {
+        return confirm('Уверены, что хотите удалить все оценки?');
+      } else {
+        alert('Неверный секретный код');
+        return false;
+      }
+    }
+
+    function confirmResetAllStatuses() {
+      const code = prompt('Пожалуйста, введите код администратора:');
+      if (code == "{{admin_confirm_code}}") {
+        return confirm('Уверены, что хотите сбросить все статусы оценок?');
+      } else {
+        alert('Неверный секретный код');
+        return false;
+      }
+    }
+  </script>
 </head>
 
 <body>
   <header class="page-header">
     <div class="brand">
       <a href="{{ url_for('dashboard', head_id=head_id) }}"><img
-          src="../static/images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png" alt="brand"></a>
+          src="{{ url_for('static', filename='images/1hfxk63e2gf3l47fxj3c2rnvvogk38xp.png') }}" alt="brand"></a>
     </div>
     <div class="buttons">
       <div class="username">{{ username }}</div>
@@ -42,29 +73,29 @@
         <tbody>
           {% for rate in rate_list %}
           <tr>
-            
+
             <td>{{ loop.index }}</td>
             <td>{{ rate.headname }}</td>
             <td>{{ rate.username }}</td>
             <td>
-                <a href="{{ url_for('page_access_colleague_page', head_id=rate.head_id, colleague_id = rate.user_id) }}" class="view-rating-btn">Посмотреть оценку</a>
-              </td>
+              <a href="{{ url_for('page_access_colleague_page', head_id=rate.head_id, colleague_id=rate.user_id) }}" class="view-rating-btn">Посмотреть оценку</a>
+            </td>
             <td>
-              <form method="post" action="{{ url_for('admin_rate_access') }}">
+              <form method="post" action="{{ url_for('admin_rate_access') }}" onsubmit="return confirmDeleteLastRating()">
                 <input type="hidden" name="head_id_del" value="{{ rate.head_id }}">
                 <input type="hidden" name="user_id_del" value="{{ rate.user_id }}">
-                <input type="submit" style="width:350px" name = 'del_rate' class="delete-rate" value="Удалить последнюю оценку">
-              </form>    
+                <input type="submit" style="width:350px" name="del_rate" class="delete-rate" value="Удалить последнюю оценку">
+              </form>
             </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
-      <form method="post" action="{{ url_for('admin_rate_access') }}">
+      <form method="post" action="{{ url_for('admin_rate_access') }}" onsubmit="return confirmDeleteAllRatings()">
         <input type="submit" name="del_all" class="delete-all" value="Удалить все оценки">
       </form>
-      <form method="post" action="{{ url_for('admin_rate_access') }}">
-        <input type="submit" name="reset_all" class="delete-all" value="Сбрросить все статусы голосования">
+      <form method="post" action="{{ url_for('admin_rate_access') }}" onsubmit="return confirmResetAllStatuses()">
+        <input type="submit" name="reset_all" class="delete-all" value="Сбросить все статусы голосования">
       </form>
     </div>
   </main>

@@ -22,25 +22,6 @@ class UserManager:
     def add_user(self, username, password):
         self.users[username] = password
 
-
-class AdminManager:
-    def __init__(self, dictionary):
-        self.admin = dictionary
-
-    def verify_admin(self, adminname, password):
-        return adminname in self.admin and self.admin[adminname] == password
-    
-    def login_admin(self, adminname, password):
-        if self.verify_admin(adminname, password):
-            user = UserLogin().create(adminname)  
-            login_user(user)  
-            return True
-        return False
-
-    def logout_admin(self):
-        logout_user()
-
-
 class UserLogin(UserMixin):
     def get_user_from_DB(self, user_id, db):
         self.__user = db.get_num_record_userinfo(user_id)
@@ -61,3 +42,21 @@ class UserLogin(UserMixin):
 
     def get_id(self):
         return str(self.__user)
+
+
+class AdminManager(UserLogin):
+    def __init__(self, dictionary):
+        self.admin = dictionary
+
+    def verify_admin(self, adminname, password):
+        return adminname in self.admin and self.admin[adminname] == password
+    
+    def login_admin(self, adminname, password):
+        if self.verify_admin(adminname, password):
+            user = self.create(adminname)  
+            login_user(user)  
+            return True
+        return False
+
+    def logout_admin(self):
+        logout_user()

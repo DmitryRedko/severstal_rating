@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_login import LoginManager, login_user, logout_user, login_required
 from user import UserManager, AdminManager, UserLogin
-from config import dictionary, db_settings
+from config import dictionary, db_settings, admin_confirm_code
 from database import DataBase
 import pandas as pd
 from werkzeug.security import generate_password_hash
@@ -55,7 +55,7 @@ class FlaskApp():
         self.app.route('/logout')(self.logout)
         
     def run(self):
-        self.app.run(debug=True, port=5000)
+        self.app.run(debug=True, port=5001)
 
     def home(self):
         return render_template('base/index.html')
@@ -281,38 +281,6 @@ class FlaskApp():
         merged_table = pd.merge(merged_table, headinfo, on='head_record_card',  how='inner')
         
         self.created_df = merged_table.drop_duplicates()
-        
-        # print()
-        # print(max_scores)
-        # print()
-        # print(marks)
-        # print()
-        # print(info)
-        # print()
-        # print(headinfo)
-        
-    # Сделаю попозже
-    # def __create_statistic_plot(self):
-    #     labels = ['Еще не проголосовали', 'Проголосовали', ]
-    #     sizes = [len(self.created_df), 40]
-    #     colors = ['red', 'green']
-
-    #     plt.figure()
-    #     plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
-    #     plt.axis('equal')  
-
-
-    #     # Сохраняем график в буфер
-    #     buffer = io.BytesIO()
-    #     plt.savefig(buffer, format='png')
-    #     buffer.seek(0)
-
-    #     # Преобразуем график в формат base64 для передачи в HTML
-    #     plot_data = base64.b64encode(buffer.getvalue()).decode()
-
-    #     buffer.close()
-        
-    #     return plot_data
 
     @login_required
     def dashboard_admin(self):
@@ -336,12 +304,6 @@ class FlaskApp():
                 color.append('orange')
             else:
                 color.append('green')
-        print(head_record_info)
-        print(colleagues_reated)
-        print(colleagues)
-        print(color)
-
-        print(head_record_info)
 
         return render_template('admin/rate_statistic/dashboard_main_heads.html',
                                head_record_nums=head_record_info,
@@ -487,32 +449,33 @@ class FlaskApp():
             user_id_del = request.form.get('user_id_del')
             head_id_del = request.form.get('head_id_del')
             user_num_del = str((self.db.get_id_userinfo(user_id_del))['employee_record_card'])
-            print(user_num_del)
             flag_first = self.db.del_last_rate(user_num_del,'first')
             flag_second = self.db.del_last_rate(user_num_del,'second')
             if(flag_first and flag_second):
                 self.db.update_rating_status(user_id_del, head_id_del, 0)
-            print(flag_first, flag_second)
+            
             
             
         if request.method == 'POST' and 'del_all' in request.form:
             self.db.del_all_performances()
         if request.method == 'POST' and 'reset_all' in request.form:
             self.db.reset_all_statuses()
+            
         rate_list = []
         all_rate_statuses = self.db.get_all_rate_statuses()
-        print(all_rate_statuses)
         for i in range(len(all_rate_statuses)):
-            print(all_rate_statuses[i])
-            headname = self.db.get_id_userinfo(all_rate_statuses[i][0])['full_name']
-            username = self.db.get_id_userinfo(all_rate_statuses[i][1])['full_name']
-            rate_list.append(
-                {'head_id': all_rate_statuses[i][0],
-                 'user_id': all_rate_statuses[i][1],
-                 'headname': headname,
-                 'username' : username
-                 })
-        return render_template('admin/rate_access/rate_access.html', rate_list = rate_list)
+            try:
+                headname = self.db.get_id_userinfo(all_rate_statuses[i][0])['full_name']
+                username = self.db.get_id_userinfo(all_rate_statuses[i][1])['full_name']
+                rate_list.append(
+                    {'head_id': all_rate_statuses[i][0],
+                    'user_id': all_rate_statuses[i][1],
+                    'headname': headname,
+                    'username' : username
+                    })
+            except:
+                pass
+        return render_template('admin/rate_access/rate_access.html', rate_list = rate_list, admin_confirm_code = admin_confirm_code)
     
     @login_required
     def page_access_colleague_page(self, colleague_id, head_id):
@@ -548,8 +511,8 @@ class FlaskApp():
             head_id_current = request.form.get('head_id')
             password = self.__generate_random_password()
             hashed_password = generate_password_hash(password)
-            print(password)
-            print(hashed_password)
+            # print(password)
+            # print(hashed_password)
             self.db.set_new_password_admin(head_id_current, hashed_password)
             
         auterisation_info = self.db.get_auterisation_info() 
@@ -561,7 +524,8 @@ class FlaskApp():
         return render_template('admin/change_password/change_password.html',
                                head_id_current = head_id_current,
                                print_info = print_info,
-                               password = password
+                               password = password,
+                               admin_confirm_code = admin_confirm_code
                                )
 
     @login_required
@@ -615,7 +579,8 @@ class FlaskApp():
         return render_template('admin/admin_criteria/admin_criteria.html',
                                status_print = self.__admin_criteria_flag,
                                first_criterias = self.__first_filtred_criterias,
-                               second_criterias = self.__second_filtred_criterias)
+                               second_criterias = self.__second_filtred_criterias,
+                               admin_confirm_code = admin_confirm_code)
     
     @login_required
     def change_criteria(self, criteria_id,bool_block_status):
@@ -704,8 +669,9 @@ class FlaskApp():
             
         return render_template('admin/users_base/user_base.html',
                                filter_flag = self.__admin_filter_flag,
-                               users = users
-                               )
+                               users = users,
+                               admin_confirm_code = admin_confirm_code)
+                               
         
     @login_required
     def change_user(self, user_id):
