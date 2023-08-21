@@ -15,20 +15,20 @@
                     alt="brand"></a>
         </div>
         <div class="buttons">
-            <a href="{{ url_for('login') }}" class="headerbottom">Login</a>
-            <a href="{{ url_for('admin') }}" class="headerbottom">Admin</a>
+            <a href="{{ url_for('login') }}" class="headerbottom">Вход</a>
+            <a href="{{ url_for('admin') }}" class="headerbottom">Администратор</a>
         </div>
     </header>
 
     <main class="form-container">
-        <h1>Login</h1>
+        <h1>Авторизация</h1>
         {% if error %}
         <p>{{ error }}</p>
         {% endif %}
         <form action="{{ url_for('login') }}" method="POST">
             <input type="text" name="username" value="002" placeholder="Username"><br>
             <input type="password" name="password" value="002" placeholder="Password"><br>
-            <input type="submit" class="square-button" value="Login">
+            <input type="submit" class="square-button" value="Войти">
 
         </form>
     </main>

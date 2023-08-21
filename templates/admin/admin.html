@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>administration Page</title>
+    <title>Administration Page</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login/main_login.css') }}">
@@ -15,20 +15,20 @@
                     alt="brand"></a>
         </div>
         <div class="buttons">
-            <a href="{{ url_for('login') }}" class="headerbottom">Login</a>
-            <a href="{{ url_for('admin') }}" class="headerbottom">Admin</a>
+            <a href="{{ url_for('login') }}" class="headerbottom">Вход</a>
+            <a href="{{ url_for('admin') }}" class="headerbottom">Администратор</a>
         </div>
     </header>
 
     <main class="form-container">
-        <h1>admin</h1>
+        <h1>Авторизация администратора</h1>
         {% if error %}
         <p>{{ error }}</p>
         {% endif %}
         <form action="{{ url_for('admin') }}" method="POST">
             <input type="text" name="username" value ='admin' placeholder="Username"><br>
             <input type="password" name="password" value = 'admin' placeholder="Password"><br>
-            <input type="submit" style="cursor: pointer;" class="square-button" value="Login"> 
+            <input type="submit" style="cursor: pointer;" class="square-button" value="Вход"> 
         </form>
     </main>
 </body>

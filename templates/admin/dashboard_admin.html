@@ -2,11 +2,10 @@
 <html>
 
 <head>
-    <title>Rating menu</title>
+    <title>Admin menu</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/header.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base/common.css') }}">
-    <link rel="stylesheet" type="text/css"
-        href="{{ url_for('static', filename='main_administration/main_administration.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main_administration/main_administration.css') }}">
 </head>
 
 <body>
@@ -21,18 +20,17 @@
 
     <main class="form-container">
         <div class="content-container">
-
+            
             <div class="button-container">
                 <a class="square-button" href="{{ url_for('dashboard_main_heads') }}">1. Статистика по оценкам</a>
                 <a class="square-button" href="{{ url_for('create_report') }}">2. Сформировать отчет </a>
                 <a class="square-button" href="{{ url_for('admin_rate_access') }}">3. Статус оценивания </a>
+            </div>
+
+            <div class="button-container">
                 <a class="square-button" href="{{ url_for('admin_menu_change_password') }}">4. Сменить пароль </a>
                 <a class="square-button" href="{{ url_for('admin_criteria') }}">5. Администрирование критериев </a>
                 <a class="square-button" href="{{ url_for('user_base') }}">6. Администрирование сотрудников </a>
-            </div>
-
-            <div class="sidebar">
-
             </div>
         </div>
     </main>
