@@ -72,7 +72,7 @@ class FlaskApp():
                 session['password'] = password
                 return redirect(url_for('dashboard', head_id=user_id))
             else:
-                error = 'Invalid credentials. Please try again.'
+                error = 'Неверный логин или пароль. Попробуйте снова или запросите восстановление у администратора.'
                 return render_template('dashboard/login.html', error=error)
         return render_template('dashboard/login.html')
 
@@ -87,7 +87,7 @@ class FlaskApp():
                 session['username'] = username
                 return redirect(url_for('dashboard_admin'))
             else:
-                error = 'Invalid credentials. Please try again.'
+                error = 'Неверный логин или пароль.'
                 return render_template('admin/admin.html', error=error)
         return render_template('admin/admin.html')
 

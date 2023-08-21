@@ -6,17 +6,13 @@
     background-color: rgba(255, 255, 255, 0);
 }
 
-.page-footer {
-    background: #9984D4;
-}
-
 .form-container {
     background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
     border-radius: 10px;
     margin: 0;
     width: 98.5vw;
-    height: 100vh;
+    min-height: fit-content; /* Adjust this line */
     box-sizing: border-box;
 }
 
@@ -53,7 +49,7 @@ tr:hover {
 }
 
 th {
-    background-color: #4CAF50;
+    background-color: #012F6B;
     color: white;
 }
 

@@ -2,22 +2,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    flex-grow: 1;
     background-color: rgba(255, 255, 255, 0);
 }
 
-.page-footer {
-    background: #9984D4;
-}
-
 .form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
     border-radius: 10px;
+    margin: 0;
     width: 98.5vw;
+    min-height: fit-content; /* Adjust this line */
     box-sizing: border-box;
 }
 
@@ -57,7 +52,7 @@ tr:hover {
 }
 
 th {
-    background-color: #4CAF50;
+    background-color: #012F6B;
     color: white;
 }
 
@@ -65,7 +60,7 @@ th {
     align-self: flex-end;
     display: inline-block;
     padding: 10px 20px;
-    background-color: #5378d3;
+    background-color: #244391;;
     color: white;
     font-size: 15px;
     text-decoration: none;
@@ -76,7 +71,7 @@ th {
 }
 
 .submit-button:hover {
-    background-color: #4CAF50;
+    background-color: #012F6B;
 }
 
 .status-message_error {
@@ -86,7 +81,7 @@ th {
 }
 
 .status-message_success {
-    color: #4CAF50;
+    color: #012F6B;
     font-size: 20px;
     font-weight: bold;
 }

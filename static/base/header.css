@@ -18,7 +18,7 @@
   flex: 1;
   font-size: 25px;
   font-weight: bold;
-  color: #244391;
+  color:  #012F6B;
   margin-right: 30px;
 }
 
@@ -35,7 +35,7 @@
 .page-header .headerbottom {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #5378d3;
+  background-color: #244391;
   color: white;
   text-decoration: none;
   border-radius: 5px;
@@ -45,7 +45,7 @@
 }
 
 .page-header .headerbottom:hover {
-  background-color: #4562a0;
+  background-color: #012F6B;
 }
 
 .container {
@@ -66,7 +66,7 @@
 .container a.button {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #4CAF50;
+  background-color: #244391;
   color: white;
   text-decoration: none;
   border-radius: 5px;
@@ -75,5 +75,5 @@
 }
 
 .links a.button:hover {
-  background-color: #45a049;
+  background-color: #012F6B;
 }

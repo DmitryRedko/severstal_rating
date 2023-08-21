@@ -6,9 +6,6 @@
     background-color: rgba(255, 255, 255, 0);
 }
 
-.page-footer {
-    background: #9984D4;
-}
 
 .form-container {
     background-color: rgba(255, 255, 255, 0.8);
@@ -16,7 +13,7 @@
     border-radius: 10px;
     margin: 0;
     width: 98.5vw;
-    height: 100vh;
+    min-height: fit-content; /* Adjust this line */
     box-sizing: border-box;
 }
 

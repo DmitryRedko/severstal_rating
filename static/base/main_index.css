@@ -28,7 +28,7 @@
 .container a.button {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #4CAF50;
+  background-color:#244391;
   color: white;
   text-decoration: none;
   border-radius: 5px;
@@ -36,5 +36,5 @@
 }
 
 .links a.button:hover {
-  background-color: #45a049;
+  background-color: #617FA5;
 }
